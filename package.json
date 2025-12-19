@@ -1,0 +1,33 @@
+{
+  "name": "ux-proto-playground",
+  "version": "1.0.0",
+  "description": "This is the master file for designers to create prototypes using our relevant UI libraries.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbilbao-ux/ux-proto-playground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nbilbao-ux/ux-proto-playground/issues"
+  },
+  "homepage": "https://github.com/nbilbao-ux/ux-proto-playground#readme",
+  "dependencies": {
+    "@ffa/latitude-typescript": "^1.1.9",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}
