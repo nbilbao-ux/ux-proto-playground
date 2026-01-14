@@ -1,21 +1,28 @@
 import React from 'react';
 import '@ffa/latitude-typescript';
+import WeChatOnboarding from './WeChatOnboarding';
+import styled from 'styled-components';
+
+const AppContainer = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+`;
 
 /**
  * Main App component for the UX Proto Playground
  * 
- * This is a starter template for creating prototypes using
- * the Latitude TypeScript UI library.
- * 
- * For detailed usage instructions, refer to:
- * https://flexport.atlassian.net/wiki/x/agBo3
+ * WeChat Supplier Onboarding Prototype
+ * A mobile-first, conversational onboarding flow for Chinese suppliers
  */
 function App() {
   return (
-    <div>
-      <h1>UX Proto Playground</h1>
-      <p>Welcome! Start building prototypes with Latitude TypeScript components.</p>
-    </div>
+    <AppContainer>
+      <WeChatOnboarding />
+    </AppContainer>
   );
 }
 
