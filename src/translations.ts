@@ -31,6 +31,13 @@ export interface Translations {
     confirmPassword: string;
     validating: string;
     validationComplete: string;
+    completionMessage: string;
+    completionOptions: string[];
+    errorMissingField: string;
+    errorInvalidFormat: string;
+    errorDuplicateCompany: string;
+    errorDuplicateOptions: string[];
+    errorServerTimeout: string;
   };
   ui: {
     step: string;
@@ -77,6 +84,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: 'Please re-enter your password for confirmation.',
       validating: '🔍 Validating your information...',
       validationComplete: '✔ Information confirmed\n✔ No duplicate company conflicts found\n✔ Contact details are valid',
+      completionMessage: '🎉 You have successfully completed Flexport supplier registration!\nYou can now proceed with the following actions:\n• Check rates\n• Submit bookings\n• Upload documents\n• View shipment statuses\nYou can also use the account credentials you just created to log in to Flexport on your desktop.\nWould you like to continue using the Flexport assistant now?',
+      completionOptions: ['Yes', 'Later'],
+      errorMissingField: 'It looks like you haven\'t filled in the {Field Name}. Please complete it to continue.',
+      errorInvalidFormat: 'The format you entered appears to be incorrect. Please check and re-enter.',
+      errorDuplicateCompany: 'The system has detected that this company may already exist on the Flexport platform.\nPlease confirm if this is the following company:\n{Existing Company Name}',
+      errorDuplicateOptions: ['Yes, log in to existing company', 'No, register as a new company', 'Contact Customer Service'],
+      errorServerTimeout: 'Sorry, there is a slight delay in processing. I am retrying for you now. Please wait a few seconds.',
     },
     ui: {
       step: 'Step',
@@ -121,6 +135,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: '请再次输入密码以确认。',
       validating: '🔍 正在验证您的信息...',
       validationComplete: '✔ 信息已确认\n✔ 未发现重复公司冲突\n✔ 联系方式有效',
+      completionMessage: '🎉 您已成功完成 Flexport 供应商注册！\n您现在可以进行以下操作：\n• 查看费率\n• 提交预订\n• 上传文件\n• 查看货运状态\n您也可以使用刚刚创建的账户凭据在电脑上登录 Flexport。\n您是否希望继续使用 Flexport 助手？',
+      completionOptions: ['是', '稍后'],
+      errorMissingField: '看起来您还没有填写 {Field Name}。请完成它以继续。',
+      errorInvalidFormat: '您输入的格式似乎不正确。请检查并重新输入。',
+      errorDuplicateCompany: '系统检测到此公司可能已存在于 Flexport 平台上。\n请确认这是否是以下公司：\n{Existing Company Name}',
+      errorDuplicateOptions: ['是，登录现有公司', '否，注册为新公司', '联系客服'],
+      errorServerTimeout: '抱歉，处理过程中出现轻微延迟。我正在为您重试。请稍等几秒钟。',
     },
     ui: {
       step: '步骤',
@@ -165,6 +186,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: '請再次輸入密碼以確認。',
       validating: '🔍 正在驗證您的資訊...',
       validationComplete: '✔ 資訊已確認\n✔ 未發現重複公司衝突\n✔ 聯絡方式有效',
+      completionMessage: '🎉 您已成功完成 Flexport 供應商註冊！\n您現在可以進行以下操作：\n• 查看費率\n• 提交預訂\n• 上傳文件\n• 查看貨運狀態\n您也可以使用剛剛創建的帳戶憑證在電腦上登入 Flexport。\n您是否希望繼續使用 Flexport 助手？',
+      completionOptions: ['是', '稍後'],
+      errorMissingField: '看起來您還沒有填寫 {Field Name}。請完成它以繼續。',
+      errorInvalidFormat: '您輸入的格式似乎不正確。請檢查並重新輸入。',
+      errorDuplicateCompany: '系統檢測到此公司可能已存在於 Flexport 平台上。\n請確認這是否是以下公司：\n{Existing Company Name}',
+      errorDuplicateOptions: ['是，登入現有公司', '否，註冊為新公司', '聯絡客服'],
+      errorServerTimeout: '抱歉，處理過程中出現輕微延遲。我正在為您重試。請稍等幾秒鐘。',
     },
     ui: {
       step: '步驟',
@@ -209,6 +237,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: 'Voer alstublieft uw wachtwoord opnieuw in ter bevestiging.',
       validating: '🔍 Uw informatie valideren...',
       validationComplete: '✔ Informatie bevestigd\n✔ Geen dubbele bedrijfsconflicten gevonden\n✔ Contactgegevens zijn geldig',
+      completionMessage: '🎉 U heeft de Flexport leveranciersregistratie succesvol voltooid!\nU kunt nu doorgaan met de volgende acties:\n• Tarieven bekijken\n• Boekingen indienen\n• Documenten uploaden\n• Zendingsstatussen bekijken\nU kunt ook de accountgegevens die u zojuist heeft aangemaakt gebruiken om in te loggen op Flexport op uw desktop.\nWilt u nu doorgaan met het gebruik van de Flexport-assistent?',
+      completionOptions: ['Ja', 'Later'],
+      errorMissingField: 'Het lijkt erop dat u het {Field Name} niet heeft ingevuld. Vul dit alstublieft in om door te gaan.',
+      errorInvalidFormat: 'Het formaat dat u heeft ingevoerd lijkt onjuist te zijn. Controleer en voer het opnieuw in.',
+      errorDuplicateCompany: 'Het systeem heeft gedetecteerd dat dit bedrijf mogelijk al bestaat op het Flexport-platform.\nBevestig alstublieft of dit het volgende bedrijf is:\n{Existing Company Name}',
+      errorDuplicateOptions: ['Ja, log in op bestaand bedrijf', 'Nee, registreer als nieuw bedrijf', 'Neem contact op met klantenservice'],
+      errorServerTimeout: 'Sorry, er is een lichte vertraging in de verwerking. Ik probeer het nu opnieuw voor u. Wacht alstublieft een paar seconden.',
     },
     ui: {
       step: 'Stap',
@@ -253,6 +288,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: 'Vui lòng nhập lại mật khẩu để xác nhận.',
       validating: '🔍 Đang xác minh thông tin của bạn...',
       validationComplete: '✔ Thông tin đã được xác nhận\n✔ Không tìm thấy xung đột công ty trùng lặp\n✔ Thông tin liên hệ hợp lệ',
+      completionMessage: '🎉 Bạn đã hoàn thành đăng ký nhà cung cấp Flexport thành công!\nBây giờ bạn có thể thực hiện các hành động sau:\n• Kiểm tra giá\n• Gửi đặt chỗ\n• Tải lên tài liệu\n• Xem trạng thái lô hàng\nBạn cũng có thể sử dụng thông tin đăng nhập tài khoản vừa tạo để đăng nhập vào Flexport trên máy tính của mình.\nBạn có muốn tiếp tục sử dụng trợ lý Flexport ngay bây giờ không?',
+      completionOptions: ['Có', 'Sau'],
+      errorMissingField: 'Có vẻ như bạn chưa điền vào {Field Name}. Vui lòng hoàn thành để tiếp tục.',
+      errorInvalidFormat: 'Định dạng bạn nhập có vẻ không chính xác. Vui lòng kiểm tra và nhập lại.',
+      errorDuplicateCompany: 'Hệ thống đã phát hiện rằng công ty này có thể đã tồn tại trên nền tảng Flexport.\nVui lòng xác nhận xem đây có phải là công ty sau đây không:\n{Existing Company Name}',
+      errorDuplicateOptions: ['Có, đăng nhập vào công ty hiện có', 'Không, đăng ký công ty mới', 'Liên hệ Dịch vụ Khách hàng'],
+      errorServerTimeout: 'Xin lỗi, có một chút trễ trong quá trình xử lý. Tôi đang thử lại cho bạn ngay bây giờ. Vui lòng đợi vài giây.',
     },
     ui: {
       step: 'Bước',
@@ -297,6 +339,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: 'กรุณากรอกรหัสผ่านอีกครั้งเพื่อยืนยัน',
       validating: '🔍 กำลังตรวจสอบข้อมูลของคุณ...',
       validationComplete: '✔ ยืนยันข้อมูลแล้ว\n✔ ไม่พบความขัดแย้งของบริษัทซ้ำ\n✔ ข้อมูลติดต่อถูกต้อง',
+      completionMessage: '🎉 คุณได้ลงทะเบียนซัพพลายเออร์ Flexport สำเร็จแล้ว!\nตอนนี้คุณสามารถดำเนินการต่อไปนี้ได้:\n• ตรวจสอบอัตรา\n• ส่งการจอง\n• อัปโหลดเอกสาร\n• ดูสถานะการจัดส่ง\nคุณยังสามารถใช้ข้อมูลประจำตัวบัญชีที่คุณเพิ่งสร้างเพื่อเข้าสู่ระบบ Flexport บนเดสก์ท็อปของคุณ\nคุณต้องการใช้ผู้ช่วย Flexport ต่อไปตอนนี้หรือไม่?',
+      completionOptions: ['ใช่', 'ภายหลัง'],
+      errorMissingField: 'ดูเหมือนว่าคุณยังไม่ได้กรอก {Field Name} กรุณากรอกให้เสร็จเพื่อดำเนินการต่อ',
+      errorInvalidFormat: 'รูปแบบที่คุณป้อนดูเหมือนไม่ถูกต้อง กรุณาตรวจสอบและป้อนใหม่',
+      errorDuplicateCompany: 'ระบบตรวจพบว่าบริษัทนี้อาจมีอยู่แล้วบนแพลตฟอร์ม Flexport\nกรุณายืนยันว่านี่คือบริษัทต่อไปนี้หรือไม่:\n{Existing Company Name}',
+      errorDuplicateOptions: ['ใช่ เข้าสู่ระบบบริษัทที่มีอยู่', 'ไม่ ลงทะเบียนเป็นบริษัทใหม่', 'ติดต่อฝ่ายบริการลูกค้า'],
+      errorServerTimeout: 'ขออภัย มีความล่าช้าเล็กน้อยในการประมวลผล ฉันกำลังลองใหม่อีกครั้งให้คุณตอนนี้ กรุณารอสักครู่',
     },
     ui: {
       step: 'ขั้นตอน',
@@ -341,6 +390,13 @@ export const translations: Record<Language, Translations> = {
       confirmPassword: 'Silakan masukkan kembali kata sandi Anda untuk konfirmasi.',
       validating: '🔍 Memvalidasi informasi Anda...',
       validationComplete: '✔ Informasi dikonfirmasi\n✔ Tidak ditemukan konflik perusahaan duplikat\n✔ Detail kontak valid',
+      completionMessage: '🎉 Anda telah berhasil menyelesaikan pendaftaran supplier Flexport!\nAnda sekarang dapat melanjutkan dengan tindakan berikut:\n• Periksa tarif\n• Kirim pemesanan\n• Unggah dokumen\n• Lihat status pengiriman\nAnda juga dapat menggunakan kredensial akun yang baru saja Anda buat untuk masuk ke Flexport di desktop Anda.\nApakah Anda ingin melanjutkan menggunakan asisten Flexport sekarang?',
+      completionOptions: ['Ya', 'Nanti'],
+      errorMissingField: 'Sepertinya Anda belum mengisi {Field Name}. Silakan lengkapi untuk melanjutkan.',
+      errorInvalidFormat: 'Format yang Anda masukkan tampaknya tidak benar. Silakan periksa dan masukkan kembali.',
+      errorDuplicateCompany: 'Sistem telah mendeteksi bahwa perusahaan ini mungkin sudah ada di platform Flexport.\nSilakan konfirmasi apakah ini adalah perusahaan berikut:\n{Existing Company Name}',
+      errorDuplicateOptions: ['Ya, masuk ke perusahaan yang ada', 'Tidak, daftar sebagai perusahaan baru', 'Hubungi Layanan Pelanggan'],
+      errorServerTimeout: 'Maaf, ada sedikit penundaan dalam pemrosesan. Saya sedang mencoba lagi untuk Anda sekarang. Harap tunggu beberapa detik.',
     },
     ui: {
       step: 'Langkah',

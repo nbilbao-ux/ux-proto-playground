@@ -2,11 +2,14 @@ import { Translations } from './translations';
 
 export interface ConversationStep {
   agent: string;
-  type: 'text' | 'select' | 'confirm' | 'system';
+  type: 'text' | 'select' | 'confirm' | 'system' | 'error';
   field?: string;
   preFilledField?: string;
   options?: string[];
   isPassword?: boolean;
+  errorType?: 'missingField' | 'invalidFormat' | 'duplicateCompany' | 'serverTimeout';
+  errorFieldName?: string;
+  errorCompanyName?: string;
 }
 
 /**
@@ -161,6 +164,62 @@ export const getConversationScript = (t: Translations): ConversationStep[] => [
   {
     agent: `${t.conversation.validating}\n${t.conversation.validationComplete}`,
     type: 'system'
+  },
+  
+  // Step 18: Onboarding Completion
+  // Agent congratulates supplier and offers to continue using the assistant
+  {
+    agent: t.conversation.completionMessage,
+    type: 'confirm',
+    options: t.conversation.completionOptions
   }
 ];
+
+/**
+ * Error Handling Scripts
+ * These are dynamically generated based on validation errors
+ */
+export const getErrorStep = (
+  t: Translations,
+  errorType: 'missingField' | 'invalidFormat' | 'duplicateCompany' | 'serverTimeout',
+  fieldName?: string,
+  companyName?: string
+): ConversationStep => {
+  switch (errorType) {
+    case 'missingField':
+      return {
+        agent: t.conversation.errorMissingField.replace('{Field Name}', fieldName || 'field'),
+        type: 'error',
+        errorType: 'missingField',
+        errorFieldName: fieldName
+      };
+    case 'invalidFormat':
+      return {
+        agent: t.conversation.errorInvalidFormat,
+        type: 'error',
+        errorType: 'invalidFormat',
+        errorFieldName: fieldName
+      };
+    case 'duplicateCompany':
+      return {
+        agent: t.conversation.errorDuplicateCompany.replace('{Existing Company Name}', companyName || 'Unknown Company'),
+        type: 'error',
+        errorType: 'duplicateCompany',
+        options: t.conversation.errorDuplicateOptions,
+        errorCompanyName: companyName
+      };
+    case 'serverTimeout':
+      return {
+        agent: t.conversation.errorServerTimeout,
+        type: 'error',
+        errorType: 'serverTimeout'
+      };
+    default:
+      return {
+        agent: t.conversation.errorServerTimeout,
+        type: 'error',
+        errorType: 'serverTimeout'
+      };
+  }
+};
 

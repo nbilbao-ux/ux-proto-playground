@@ -40,7 +40,7 @@ const PhoneMockup = styled.div`
 const Screen = styled.div`
   width: 100%;
   height: 100%;
-  background: #ededed;
+  background: #1a1a1a;
   border-radius: 32px;
   overflow: hidden;
   display: flex;
@@ -49,20 +49,20 @@ const Screen = styled.div`
 
 const StatusBar = styled.div`
   height: 44px;
-  background: #ededed;
+  background: #1a1a1a;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #000;
+  color: #ffffff;
 `;
 
 const WeChatHeader = styled.div`
   height: 64px;
-  background: #393939;
-  color: #fff;
+  background: #2c2c2c;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,27 +75,28 @@ const WeChatHeader = styled.div`
     position: absolute;
     left: 20px;
     font-size: 16px;
+    color: #ffffff;
   }
 `;
 
 const LanguageDropdown = styled.select`
   position: absolute;
   right: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   padding: 6px 12px;
   font-size: 14px;
   cursor: pointer;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
   }
   
   option {
-    background: #393939;
-    color: #fff;
+    background: #2c2c2c;
+    color: #ffffff;
   }
 `;
 
@@ -103,10 +104,15 @@ const ChatContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #ededed;
+  background: #1a1a1a;
   display: flex;
   flex-direction: column;
   gap: 12px;
+`;
+
+const MessageWrapper = styled.div<{ type: 'agent' | 'user' | 'system' }>`
+  display: flex;
+  ${props => props.type === 'user' && 'justify-content: flex-end;'}
 `;
 
 const MessageBubble = styled.div<{ type: 'agent' | 'user' | 'system' }>`
@@ -116,10 +122,11 @@ const MessageBubble = styled.div<{ type: 'agent' | 'user' | 'system' }>`
     props.type === 'agent' ? '0 8px 8px 8px' : 
     props.type === 'user' ? '8px 0 8px 8px' : '8px'};
   background: ${props => 
-    props.type === 'agent' ? '#fff' : 
-    props.type === 'user' ? '#95ec69' : '#f0f0f0'};
-  color: ${props => props.type === 'system' ? '#888' : '#000'};
-  align-self: ${props => props.type === 'user' ? 'flex-end' : 'flex-start'};
+    props.type === 'agent' ? '#2c2c2c' : 
+    props.type === 'user' ? '#95ec69' : '#2c2c2c'};
+  color: ${props => 
+    props.type === 'agent' ? '#ffffff' : 
+    props.type === 'user' ? '#000000' : '#ffffff'};
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
@@ -135,7 +142,7 @@ const MessageBubble = styled.div<{ type: 'agent' | 'user' | 'system' }>`
       height: 0;
       border-top: 8px solid transparent;
       border-bottom: 8px solid transparent;
-      border-right: 8px solid #fff;
+      border-right: 8px solid #2c2c2c;
     }
   `}
   
@@ -156,8 +163,8 @@ const MessageBubble = styled.div<{ type: 'agent' | 'user' | 'system' }>`
 
 const InputArea = styled.div`
   padding: 12px 16px;
-  background: #f7f7f7;
-  border-top: 1px solid #d9d9d9;
+  background: #1a1a1a;
+  border-top: 1px solid #2c2c2c;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -166,14 +173,20 @@ const InputArea = styled.div`
 const TextInput = styled.input`
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #2c2c2c;
   border-radius: 6px;
   font-size: 16px;
-  background: #fff;
+  background: #2c2c2c;
+  color: #ffffff;
+  
+  &::placeholder {
+    color: #888888;
+  }
   
   &:focus {
     outline: none;
     border-color: #07c160;
+    background: #333333;
   }
 `;
 
@@ -200,42 +213,81 @@ const SendButton = styled.button`
 
 const OptionButton = styled.button`
   padding: 10px 16px;
-  background: #07c160;
-  border: 1px solid #d9d9d9;
+  background: #2c2c2c;
+  border: 1px solid #3a3a3a;
   border-radius: 6px;
   font-size: 15px;
   margin: 4px 0;
   cursor: pointer;
   width: 100%;
   text-align: left;
-  color: rgba(18, 18, 18, 1);
+  color: #ffffff;
+  
+  &:hover {
+    background: #3a3a3a;
+    border-color: #07c160;
+  }
+`;
+
+const PreFilledText = styled.div`
+  background: #2c2c2c;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 14px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const PreFilledValue = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const PreFilledButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+`;
+
+const ConfirmButton = styled.button`
+  flex: 1;
+  padding: 8px 12px;
+  background: #07c160;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
   
   &:hover {
     background: #06ad56;
   }
 `;
 
-const PreFilledText = styled.div`
-  background: #f0f0f0;
+const EditButton = styled.button`
+  flex: 1;
   padding: 8px 12px;
-  border-radius: 4px;
-  color: #666;
-  font-size: 14px;
-  margin: 8px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const EditIcon = styled.span`
+  background: transparent;
   color: #07c160;
-  font-size: 12px;
+  border: 1px solid #07c160;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  
+  &:hover {
+    background: rgba(7, 193, 96, 0.1);
+  }
 `;
 
 const ProgressIndicator = styled.div`
   text-align: center;
-  color: #888;
+  color: #888888;
   font-size: 12px;
   margin-bottom: 8px;
 `;
@@ -247,21 +299,21 @@ const WelcomeScreen = styled.div`
   justify-content: center;
   flex: 1;
   padding: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  background: #1a1a1a;
+  color: #ffffff;
 `;
 
 const FlexportLogo = styled.div`
   width: 80px;
   height: 80px;
-  background: #fff;
+  background: #07c160;
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
   font-weight: bold;
-  color: #667eea;
+  color: #ffffff;
   margin-bottom: 30px;
 `;
 
@@ -282,19 +334,19 @@ const WelcomeSubtitle = styled.p`
 
 const StartButton = styled.button`
   padding: 14px 40px;
-  background: #667eea;
+  background: #07c160;
   color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    background: #5568d3;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    background: #06ad56;
   }
 `;
 
@@ -305,7 +357,7 @@ const SuccessScreen = styled.div`
   justify-content: center;
   flex: 1;
   padding: 40px;
-  background: #ededed;
+  background: #1a1a1a;
 `;
 
 const SuccessIcon = styled.div`
@@ -325,7 +377,7 @@ const SuccessTitle = styled.h2`
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #000;
+  color: #ffffff;
 `;
 
 const ActionButton = styled.button`
@@ -370,9 +422,9 @@ const NavigationButtons = styled.div`
 
 const NavButton = styled.button`
   padding: 10px 20px;
-  background: #667eea;
+  background: #2c2c2c;
   color: #ffffff;
-  border: none;
+  border: 1px solid #3a3a3a;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
@@ -380,29 +432,35 @@ const NavButton = styled.button`
   transition: all 0.2s;
   
   &:hover:not(:disabled) {
-    background: #5568d3;
-    transform: translateY(-2px);
+    background: #3a3a3a;
+    border-color: #07c160;
   }
   
   &:disabled {
-    background: #ccc;
+    background: #1a1a1a;
+    border-color: #2c2c2c;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
+    color: #666666;
   }
   
   &:nth-child(2) {
     background: #07c160;
+    border-color: #07c160;
     
     &:hover:not(:disabled) {
       background: #06ad56;
+      border-color: #06ad56;
     }
   }
   
   &:nth-child(3) {
-    background: #ff6b6b;
+    background: #2c2c2c;
+    border-color: #ff6b6b;
+    color: #ff6b6b;
     
     &:hover:not(:disabled) {
-      background: #ee5a5a;
+      background: rgba(255, 107, 107, 0.1);
     }
   }
 `;
@@ -697,6 +755,15 @@ const WeChatOnboarding: React.FC = () => {
       setFormData((prev: any) => ({ ...prev, [step.field!]: option }));
     }
     
+    // Handle completion step (last step in flow)
+    if (nextStepIndex >= flow.length) {
+      // Show success screen after a brief delay
+      setTimeout(() => {
+        setCurrentStage('success');
+      }, 500);
+      return;
+    }
+    
     setTimeout(() => {
       if (nextStepIndex < flow.length) {
         setCurrentStep(nextStepIndex);
@@ -729,8 +796,14 @@ const WeChatOnboarding: React.FC = () => {
     const step = flow[currentStep];
     const nextStepIndex = currentStep + 1;
     
-    if (step.preFilledField) {
-      addUserMessage(t.ui.confirm);
+    if (step.preFilledField && step.field) {
+      // Use the pre-filled value as the user's confirmation
+      const confirmedValue = formData[step.preFilledField] || formData[step.field];
+      addUserMessage(confirmedValue || t.ui.confirm);
+      
+      // Ensure formData is set with the pre-filled value
+      setFormData((prev: any) => ({ ...prev, [step.field!]: confirmedValue }));
+      
       setTimeout(() => {
         if (nextStepIndex < flow.length) {
           setCurrentStep(nextStepIndex);
@@ -745,9 +818,30 @@ const WeChatOnboarding: React.FC = () => {
                 preFilled
               );
             }, 800);
+          } else {
+            // Last step - show success
+            setTimeout(() => {
+              setCurrentStage('success');
+            }, 1500);
           }
+        } else {
+          setTimeout(() => {
+            setCurrentStage('success');
+          }, 1500);
         }
       }, 500);
+    }
+  };
+
+  const handlePreFilledEdit = () => {
+    // When editing, show the text input field
+    // The existing text input handling will take care of the rest
+    const flow = getConversationFlow();
+    const step = flow[currentStep];
+    if (step && step.type === 'text' && step.preFilledField) {
+      // Pre-populate the input with the current value
+      setCurrentInput(formData[step.preFilledField] || '');
+      inputRef.current?.focus();
     }
   };
 
@@ -835,15 +929,24 @@ const WeChatOnboarding: React.FC = () => {
             </ProgressIndicator>
           )}
           {messages.map((msg) => (
-            <div key={msg.id}>
+            <MessageWrapper key={msg.id} type={msg.type}>
               <MessageBubble type={msg.type}>
                 {msg.content.split('\n').map((line, i) => (
                   <div key={i}>{line}</div>
                 ))}
                 {msg.preFilled && (
                   <PreFilledText>
-                    <span>{msg.preFilled}</span>
-                    <EditIcon onClick={handlePreFilledConfirm}>{t.ui.edit}</EditIcon>
+                    <PreFilledValue>
+                      <span>{msg.preFilled}</span>
+                    </PreFilledValue>
+                    <PreFilledButtons>
+                      <ConfirmButton onClick={handlePreFilledConfirm}>
+                        {t.ui.confirm}
+                      </ConfirmButton>
+                      <EditButton onClick={handlePreFilledEdit}>
+                        {t.ui.edit}
+                      </EditButton>
+                    </PreFilledButtons>
                   </PreFilledText>
                 )}
                 {msg.options && msg.inputType === 'select' && (
@@ -855,8 +958,8 @@ const WeChatOnboarding: React.FC = () => {
                     ))}
                   </div>
                 )}
-                {msg.options && msg.inputType === 'confirm' && (
-                  <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                {msg.options && (msg.inputType === 'confirm' || msg.inputType === 'error') && (
+                  <div style={{ marginTop: '8px', display: 'flex', gap: '8px', flexDirection: 'column' }}>
                     {msg.options.map((opt, idx) => (
                       <OptionButton key={idx} onClick={() => handleOptionSelect(opt)}>
                         {opt}
@@ -865,7 +968,7 @@ const WeChatOnboarding: React.FC = () => {
                   </div>
                 )}
               </MessageBubble>
-            </div>
+            </MessageWrapper>
           ))}
           <div ref={chatEndRef} />
         </ChatContainer>
