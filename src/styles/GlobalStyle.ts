@@ -28,6 +28,10 @@ export const GlobalStyle = createGlobalStyle`
   * { box-sizing: border-box; }
   html, body { height: 100%; }
 
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     margin: 0;
     background: radial-gradient(1200px 700px at 35% -10%, rgba(106, 167, 255, 0.12), transparent 55%),
@@ -50,5 +54,38 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   ::selection { background: rgba(106, 167, 255, 0.28); }
+
+  /* Field highlighting for search results */
+  /* Temporarily allow overflow on Cards containing highlighted fields */
+  .field-highlighted {
+    position: relative;
+    animation: fieldHighlight 2s ease-in-out;
+    z-index: 10;
+  }
+
+  /* Allow overflow visible on parent containers when they contain highlighted fields */
+  /* This ensures the box-shadow extends beyond the Card's overflow:hidden */
+  :has(.field-highlighted),
+  :has(.field-highlighted) > * {
+    overflow: visible !important;
+  }
+
+  @keyframes fieldHighlight {
+    0% {
+      background: rgba(106, 167, 255, 0.12);
+      box-shadow: 0 0 0 0 var(--accent), 0 0 0 0 rgba(106, 167, 255, 0.3);
+    }
+    10% {
+      box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px rgba(106, 167, 255, 0.2);
+    }
+    50% {
+      background: rgba(106, 167, 255, 0.08);
+      box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px rgba(106, 167, 255, 0.2);
+    }
+    100% {
+      background: transparent;
+      box-shadow: none;
+    }
+  }
 `;
 

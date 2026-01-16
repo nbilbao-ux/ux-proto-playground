@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
 import { Button, Card, CardHeader, CardTitle, Checkbox, Divider, Input, Tag, VStack } from '@/ui/primitives';
 import { BulkActionBar } from '@/network/components/BulkActionBar';
+import { UserForm, type User } from './UserForm';
 
 const Table = styled.table`
   width: 100%;
@@ -18,10 +20,20 @@ const Th = styled.th`
   border-bottom: 1px solid var(--border);
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $clickable?: boolean }>`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  ${(p) => p.$clickable && `
+    cursor: pointer;
+    &:hover {
+      background: rgba(255,255,255,0.02);
+      color: rgba(106,167,255,0.95);
+      text-decoration: underline;
+      text-decoration-color: rgba(106,167,255,0.4);
+      text-underline-offset: 3px;
+    }
+  `}
 `;
 
 const FilterBar = styled.div`
@@ -32,9 +44,9 @@ const FilterBar = styled.div`
   align-items: center;
 `;
 
-type User = { id: string; name: string; email: string; role: 'Member' | 'Admin'; status: 'Active' | 'Invited' };
-
-export function AdminUsers() {
+function UsersList() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [users, setUsers] = useState<User[]>([
     { id: 'u1', name: 'Nina Bilbao', email: 'nina@company.com', role: 'Admin', status: 'Active' },
     { id: 'u2', name: 'Jordan Lee', email: 'jordan@company.com', role: 'Member', status: 'Active' },
@@ -143,7 +155,6 @@ export function AdminUsers() {
                   <Th>Email</Th>
                   <Th>Role</Th>
                   <Th style={{ width: 140 }}>Status</Th>
-                  <Th style={{ width: 120 }} />
                 </tr>
               </thead>
               <tbody>
@@ -156,18 +167,15 @@ export function AdminUsers() {
                         aria-label={`Select ${u.name}`}
                       />
                     </Td>
-                    <Td>{u.name}</Td>
+                    <Td
+                      $clickable
+                      onClick={() => navigate(`/settings/admin/users/${u.id}`)}
+                    >
+                      {u.name}
+                    </Td>
                     <Td>{u.email}</Td>
                     <Td>{u.role}</Td>
                     <Td>{u.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag tone="warning">Invited</Tag>}</Td>
-                    <Td style={{ textAlign: 'right' }}>
-                      <Button $variant="primary" onClick={() => {
-                        // TODO: Open edit modal/panel
-                        console.log('Edit user:', u.id);
-                      }}>
-                        Edit
-                      </Button>
-                    </Td>
                   </tr>
                 ))}
               </tbody>
@@ -178,4 +186,61 @@ export function AdminUsers() {
     </SettingsPageLayout>
   );
 }
+
+function UserEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // In a real app, this would fetch from an API
+  const [users] = useState<User[]>([
+    { id: 'u1', name: 'Nina Bilbao', email: 'nina@company.com', role: 'Admin', status: 'Active' },
+    { id: 'u2', name: 'Jordan Lee', email: 'jordan@company.com', role: 'Member', status: 'Active' },
+    { id: 'u3', name: 'Sam Patel', email: 'sam@company.com', role: 'Member', status: 'Invited' },
+  ]);
+
+  const user = users.find((u) => u.id === id);
+
+  if (!id) {
+    return <Navigate to="/settings/admin/users" replace />;
+  }
+
+  if (!user) {
+    return <Navigate to="/settings/admin/users" replace />;
+  }
+
+  const handleSubmit = async (userData: Omit<User, 'id'>) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/admin/users');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/admin/users');
+  };
+
+  const handleDelete = async (userId: string) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/admin/users');
+  };
+
+  return (
+    <UserForm
+      user={user}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function AdminUsers() {
+  return <Outlet />;
+}
+
+export { UsersList, UserEdit };
 

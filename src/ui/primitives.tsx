@@ -124,7 +124,7 @@ export const Select = styled.select`
   }
 `;
 
-export const Button = styled.button<{ $variant?: 'primary' | 'ghost' | 'danger' }>`
+export const Button = styled.button<{ $variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }>`
   border-radius: 10px;
   border: 1px solid var(--border);
   padding: 9px 10px;
@@ -145,6 +145,13 @@ export const Button = styled.button<{ $variant?: 'primary' | 'ghost' | 'danger' 
       ? `border-color: rgba(106,167,255,0.30);
          background: linear-gradient(180deg, rgba(106,167,255,0.22), rgba(106,167,255,0.12));
          &:hover:not(:disabled) { background: linear-gradient(180deg, rgba(106,167,255,0.28), rgba(106,167,255,0.14)); }`
+      : ''}
+
+  ${(p) =>
+    p.$variant === 'secondary'
+      ? `border-color: var(--border);
+         background: rgba(255,255,255,0.03);
+         &:hover:not(:disabled) { background: rgba(255,255,255,0.05); }`
       : ''}
 
   ${(p) =>

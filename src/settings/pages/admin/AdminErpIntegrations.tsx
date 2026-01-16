@@ -36,7 +36,7 @@ export function AdminErpIntegrations() {
               <CardBody>
                 <Muted>{i.desc}</Muted>
                 <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button $variant={i.status === 'Connected' ? 'ghost' : 'primary'}>
+                  <Button $variant={i.status === 'Connected' ? 'secondary' : 'primary'}>
                     {i.status === 'Connected' ? 'Manage' : 'Connect'}
                   </Button>
                 </div>

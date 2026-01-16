@@ -637,7 +637,7 @@ export function NetworkPortsLanes() {
               </div>
               <FieldControl>
                 <Button
-                  $variant="primary"
+                  $variant="secondary"
                   onClick={() => setIsImportModalOpen(true)}
                 >
                   Import Trade Lanes

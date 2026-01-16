@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
+import { useFieldHighlight } from '@/settings/useFieldHighlight';
 import { Card, CardBody, CardHeader, CardTitle, Divider, FieldControl, FieldHint, FieldLabel, FieldRow, Input, Select, Button, HStack, VStack } from '@/ui/primitives';
 import styled from 'styled-components';
 
@@ -42,6 +43,15 @@ export function AccountProfile() {
   const [preferredLanguage, setPreferredLanguage] = useState('en');
   const [title, setTitle] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Field highlight refs
+  const profilePictureRef = useFieldHighlight('profile-picture');
+  const firstNameRef = useFieldHighlight('first-name');
+  const lastNameRef = useFieldHighlight('last-name');
+  const phoneNumberRef = useFieldHighlight('phone-number');
+  const emailAddressRef = useFieldHighlight('email-address');
+  const preferredLanguageRef = useFieldHighlight('preferred-language');
+  const titleRef = useFieldHighlight('title');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -74,7 +84,7 @@ export function AccountProfile() {
           <CardTitle>Profile</CardTitle>
         </CardHeader>
         <CardBody style={{ padding: 0 }}>
-          <FieldRow>
+          <FieldRow ref={profilePictureRef}>
             <div>
               <FieldLabel>Profile Picture</FieldLabel>
               <FieldHint>Upload a photo to personalize your account</FieldHint>
@@ -86,12 +96,12 @@ export function AccountProfile() {
                 </AvatarPreview>
                 <ButtonContainer>
                   <VStack $gap={8}>
-                    <Button $variant="ghost" onClick={handleAvatarClick} type="button" style={{ width: '100px' }}>
+                    <Button $variant="secondary" onClick={handleAvatarClick} type="button" style={{ width: '100px' }}>
                       {profilePicture ? 'Change' : 'Upload'}
                     </Button>
                     {profilePicture && (
                       <Button 
-                        $variant="ghost" 
+                        $variant="secondary" 
                         onClick={() => setProfilePicture(null)} 
                         type="button"
                         style={{ fontSize: 12, padding: '4px 8px' }}
@@ -112,7 +122,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={firstNameRef}>
             <div>
               <FieldLabel>First name</FieldLabel>
               <FieldHint>Your given name</FieldHint>
@@ -127,7 +137,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={lastNameRef}>
             <div>
               <FieldLabel>Last name</FieldLabel>
               <FieldHint>Your family name</FieldHint>
@@ -142,7 +152,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={phoneNumberRef}>
             <div>
               <FieldLabel>Phone number</FieldLabel>
               <FieldHint>Your contact phone number</FieldHint>
@@ -158,7 +168,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={emailAddressRef}>
             <div>
               <FieldLabel>Email Address</FieldLabel>
               <FieldHint>Your primary email address</FieldHint>
@@ -174,7 +184,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={preferredLanguageRef}>
             <div>
               <FieldLabel>Preferred Language</FieldLabel>
               <FieldHint>Select your preferred language for the interface</FieldHint>
@@ -197,7 +207,7 @@ export function AccountProfile() {
             </FieldControl>
           </FieldRow>
           <Divider />
-          <FieldRow>
+          <FieldRow ref={titleRef}>
             <div>
               <FieldLabel>Title</FieldLabel>
               <FieldHint>Your job title or role</FieldHint>

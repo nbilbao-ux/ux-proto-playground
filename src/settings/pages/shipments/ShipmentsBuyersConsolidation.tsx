@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
 import { Button, Card, CardBody, CardHeader, CardTitle, Divider, Input, Tag, Toggle, VStack } from '@/ui/primitives';
+import { ConsolidationRuleForm, type ConsolidationRule } from './ConsolidationRuleForm';
 
 const Table = styled.table`
   width: 100%;
@@ -17,16 +19,26 @@ const Th = styled.th`
   border-bottom: 1px solid var(--border);
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $clickable?: boolean }>`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  ${(p) => p.$clickable && `
+    cursor: pointer;
+    &:hover {
+      background: rgba(255,255,255,0.02);
+      color: rgba(106,167,255,0.95);
+      text-decoration: underline;
+      text-decoration-color: rgba(106,167,255,0.4);
+      text-underline-offset: 3px;
+    }
+  `}
 `;
 
-type Rule = { id: string; name: string; match: string; behavior: string; enabled: boolean };
-
-export function ShipmentsBuyersConsolidation() {
-  const [rules, setRules] = useState<Rule[]>([
+function ConsolidationRulesList() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [rules, setRules] = useState<ConsolidationRule[]>([
     { id: 'r1', name: 'Same supplier + destination', match: 'supplierId + shipTo', behavior: 'Consolidate within 5 days', enabled: true },
     { id: 'r2', name: 'Apparel POs', match: 'category=apparel', behavior: 'Consolidate within 3 days', enabled: true },
     { id: 'r3', name: 'High value', match: 'value > $250k', behavior: 'Never consolidate', enabled: false },
@@ -70,11 +82,19 @@ export function ShipmentsBuyersConsolidation() {
               <tbody>
                 {rules.map((r) => (
                   <tr key={r.id}>
-                    <Td>{r.name}</Td>
+                    <Td
+                      $clickable
+                      onClick={() => navigate(`/settings/shipments/buyers-consolidation/${r.id}`)}
+                    >
+                      {r.name}
+                    </Td>
                     <Td>{r.match}</Td>
                     <Td>{r.behavior}</Td>
                     <Td>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                      <div 
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {r.enabled ? <Tag tone="success">On</Tag> : <Tag>Off</Tag>}
                         <Toggle
                           checked={r.enabled}
@@ -95,4 +115,61 @@ export function ShipmentsBuyersConsolidation() {
     </SettingsPageLayout>
   );
 }
+
+function ConsolidationRuleEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // In a real app, this would fetch from an API
+  const [rules] = useState<ConsolidationRule[]>([
+    { id: 'r1', name: 'Same supplier + destination', match: 'supplierId + shipTo', behavior: 'Consolidate within 5 days', enabled: true },
+    { id: 'r2', name: 'Apparel POs', match: 'category=apparel', behavior: 'Consolidate within 3 days', enabled: true },
+    { id: 'r3', name: 'High value', match: 'value > $250k', behavior: 'Never consolidate', enabled: false },
+  ]);
+
+  const rule = rules.find((r) => r.id === id);
+
+  if (!id) {
+    return <Navigate to="/settings/shipments/buyers-consolidation" replace />;
+  }
+
+  if (!rule) {
+    return <Navigate to="/settings/shipments/buyers-consolidation" replace />;
+  }
+
+  const handleSubmit = async (ruleData: Omit<ConsolidationRule, 'id'>) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/shipments/buyers-consolidation');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/shipments/buyers-consolidation');
+  };
+
+  const handleDelete = async (ruleId: string) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/shipments/buyers-consolidation');
+  };
+
+  return (
+    <ConsolidationRuleForm
+      rule={rule}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function ShipmentsBuyersConsolidation() {
+  return <Outlet />;
+}
+
+export { ConsolidationRulesList, ConsolidationRuleEdit };
 

@@ -196,7 +196,7 @@ export function AdminAI() {
                 Access AI-automation, Flexport Agent, and all other Business features
               </PromoCardDescription>
             </PromoCardLeft>
-            <PromoCardButton $variant="ghost">Start free trial</PromoCardButton>
+            <PromoCardButton $variant="secondary">Start free trial</PromoCardButton>
           </PromoCardContent>
         </PromoCard>
 

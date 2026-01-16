@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
-import { Button, Card, CardHeader, CardTitle, Divider, Input, Tag, VStack } from '@/ui/primitives';
+import { Button, Card, CardHeader, CardTitle, Divider, Tag, VStack } from '@/ui/primitives';
+import { LocationForm, type Location } from './LocationForm';
+import { locationStore } from './locationStore';
 
 const Table = styled.table`
   width: 100%;
@@ -21,18 +24,45 @@ const Td = styled.td`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255,255,255,0.02);
+    
+    &:first-child {
+      color: rgba(106,167,255,0.95);
+      text-decoration: underline;
+      text-decoration-color: rgba(106,167,255,0.4);
+      text-underline-offset: 3px;
+    }
+  }
 `;
 
-type Location = { id: string; name: string; type: 'Warehouse' | 'Port' | 'Office'; country: string; status: 'Active' | 'Draft' };
+const ClickableRow = styled.tr`
+  cursor: pointer;
 
-export function NetworkLocations() {
-  const [rows, setRows] = useState<Location[]>([
-    { id: 'loc1', name: 'LA Warehouse', type: 'Warehouse', country: 'US', status: 'Active' },
-    { id: 'loc2', name: 'Shenzhen Hub', type: 'Warehouse', country: 'CN', status: 'Active' },
-    { id: 'loc3', name: 'Rotterdam', type: 'Port', country: 'NL', status: 'Draft' },
-  ]);
+  &:hover {
+    background: rgba(255,255,255,0.02);
+  }
+`;
 
-  const [draftName, setDraftName] = useState('');
+function LocationsList() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [rows, setRows] = useState<Location[]>([]);
+
+  // Refresh list when pathname changes (e.g., navigating back from edit/create)
+  useEffect(() => {
+    setRows(locationStore.getAll());
+  }, [location.pathname]);
+
+  const handleRowClick = (location: Location) => {
+    navigate(`/settings/network/locations/${location.id}`);
+  };
+
+  const handleCreate = () => {
+    navigate('/settings/network/locations/new');
+  };
 
   return (
     <SettingsPageLayout title="Locations" subtitle="Manage operational locations used across shipments, compliance, and routing.">
@@ -40,24 +70,10 @@ export function NetworkLocations() {
         <Card>
           <CardHeader>
             <CardTitle>Locations</CardTitle>
-            <Button
-              $variant="primary"
-              onClick={() => {
-                const name = draftName.trim();
-                if (!name) return;
-                setRows((prev) => [
-                  ...prev,
-                  { id: `loc${prev.length + 1}`, name, type: 'Warehouse', country: 'US', status: 'Draft' },
-                ]);
-                setDraftName('');
-              }}
-            >
+            <Button $variant="primary" onClick={handleCreate}>
               Add location
             </Button>
           </CardHeader>
-          <div style={{ padding: 12 }}>
-            <Input placeholder="New location name…" value={draftName} onChange={(e) => setDraftName(e.target.value)} />
-          </div>
           <Divider />
           <div style={{ overflowX: 'auto' }}>
             <Table>
@@ -67,22 +83,16 @@ export function NetworkLocations() {
                   <Th>Type</Th>
                   <Th>Country</Th>
                   <Th style={{ width: 140 }}>Status</Th>
-                  <Th style={{ width: 120 }} />
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.id}>
+                  <ClickableRow key={r.id} onClick={() => handleRowClick(r)}>
                     <Td>{r.name}</Td>
                     <Td>{r.type}</Td>
                     <Td>{r.country}</Td>
                     <Td>{r.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag>Draft</Tag>}</Td>
-                    <Td style={{ textAlign: 'right' }}>
-                      <Button $variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
-                        Remove
-                      </Button>
-                    </Td>
-                  </tr>
+                  </ClickableRow>
                 ))}
               </tbody>
             </Table>
@@ -92,4 +102,82 @@ export function NetworkLocations() {
     </SettingsPageLayout>
   );
 }
+
+function LocationCreate() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (locationData: Omit<Location, 'id'>) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    locationStore.create(locationData);
+    setIsLoading(false);
+    navigate('/settings/network/locations');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/network/locations');
+  };
+
+  return (
+    <LocationForm
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      isLoading={isLoading}
+    />
+  );
+}
+
+function LocationEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const location = id ? locationStore.getById(id) : undefined;
+
+  if (!location) {
+    return <Navigate to="/settings/network/locations" replace />;
+  }
+
+  const handleSubmit = async (locationData: Omit<Location, 'id'>) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    if (id) {
+      locationStore.update(id, locationData);
+    }
+    setIsLoading(false);
+    navigate('/settings/network/locations');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/network/locations');
+  };
+
+  const handleDelete = async (locationId: string) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    locationStore.delete(locationId);
+    setIsLoading(false);
+    navigate('/settings/network/locations');
+  };
+
+  return (
+    <LocationForm
+      location={location}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function NetworkLocations() {
+  return <Outlet />;
+}
+
+export { LocationsList, LocationCreate, LocationEdit };
 

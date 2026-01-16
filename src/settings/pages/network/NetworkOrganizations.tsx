@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
 import { Button, Card, CardHeader, CardTitle, Checkbox, Input, Select, Tag, VStack } from '@/ui/primitives';
 import { InviteOrganizationModal } from '@/network/components/InviteOrganizationModal';
@@ -9,6 +10,7 @@ import { InviteToConnectModal } from '@/network/components/InviteToConnectModal'
 import { InviteToJoinModal } from '@/network/components/InviteToJoinModal';
 import { organizationService, personService } from '@/network/services/entityService';
 import { invitationService } from '@/network/services/invitationService';
+import { OrganizationForm } from './OrganizationForm';
 import type { Organization, RelationshipType, RelationshipTag, Person, Invitation } from '@/network/types';
 
 const Table = styled.table`
@@ -62,10 +64,23 @@ const SortableTh = styled(Th)`
   }
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $clickable?: boolean }>`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  ${(p) => p.$clickable && `
+    cursor: pointer;
+    &:hover {
+      background: rgba(255,255,255,0.02);
+      
+      div {
+        color: rgba(106,167,255,0.95);
+        text-decoration: underline;
+        text-decoration-color: rgba(106,167,255,0.4);
+        text-underline-offset: 3px;
+      }
+    }
+  `}
 `;
 
 const FilterBar = styled.div`
@@ -83,7 +98,9 @@ const FilterGroup = styled.div`
   align-items: center;
 `;
 
-export function NetworkOrganizations() {
+function OrganizationsList() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [contacts, setContacts] = useState<Person[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -107,7 +124,7 @@ export function NetworkOrganizations() {
 
   useEffect(() => {
     loadOrganizations();
-  }, []);
+  }, [location.pathname]); // Refresh when pathname changes
 
   const loadOrganizations = async () => {
     setLoading(true);
@@ -575,7 +592,10 @@ export function NetworkOrganizations() {
                             aria-label={`Select ${org.name}`}
                           />
                         </Td>
-                        <Td>
+                        <Td
+                          $clickable
+                          onClick={() => navigate(`/settings/network/organizations/${org.id}`)}
+                        >
                           <div style={{ fontWeight: 650, color: 'rgba(255,255,255,0.88)' }}>{org.name}</div>
                         </Td>
                         <Td>
@@ -625,7 +645,7 @@ export function NetworkOrganizations() {
                         <Td style={{ textAlign: 'right' }}>
                           {showResendButton && (
                             <Button
-                              $variant="ghost"
+                              $variant="secondary"
                               style={{ fontSize: 11, padding: '6px 8px' }}
                               onClick={() => handleResendInvite(org)}
                               disabled={resendingInviteId === pendingInv?.id}
@@ -686,3 +706,70 @@ export function NetworkOrganizations() {
     </SettingsPageLayout>
   );
 }
+
+function OrganizationEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [organization, setOrganization] = useState<Organization | undefined>(undefined);
+
+  useEffect(() => {
+    const loadOrganization = async () => {
+      if (!id) return;
+      try {
+        const orgs = await organizationService.getAll();
+        const found = orgs.find((o) => o.id === id);
+        setOrganization(found);
+      } catch (error) {
+        console.error('Failed to load organization:', error);
+      }
+    };
+    loadOrganization();
+  }, [id]);
+
+  if (!id) {
+    return <Navigate to="/settings/network/organizations" replace />;
+  }
+
+  if (!organization) {
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
+        Loading...
+      </div>
+    );
+  }
+
+  const handleSubmit = async (orgData: Omit<Organization, 'id' | 'createdAt' | 'updatedAt' | 'createdBy'>) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/network/organizations');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/network/organizations');
+  };
+
+  const handleDelete = async (orgId: string) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/network/organizations');
+  };
+
+  return (
+    <OrganizationForm
+      organization={organization}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function NetworkOrganizations() {
+  return <Outlet />;
+}
+
+export { OrganizationsList, OrganizationEdit };

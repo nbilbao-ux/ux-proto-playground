@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
+import { useFieldHighlight } from '@/settings/useFieldHighlight';
 import {
   Card,
   CardBody,
@@ -57,6 +58,13 @@ export function AccountPermission() {
   const [defaultReadOnlyAppointments, setDefaultReadOnlyAppointments] = useState(false);
   const [searchLocations, setSearchLocations] = useState('');
   const [allowDemurrageDetention, setAllowDemurrageDetention] = useState(false);
+  
+  // Field highlight refs
+  const shipmentAccessRef = useFieldHighlight('shipment-access');
+  const warehouseReceivingRef = useFieldHighlight('warehouse-receiving');
+  const readOnlyAppointmentsRef = useFieldHighlight('read-only-appointments');
+  const searchLocationsRef = useFieldHighlight('search-locations');
+  const demurrageDetentionRef = useFieldHighlight('demurrage-detention');
 
   return (
     <SettingsPageLayout
@@ -72,7 +80,7 @@ export function AccountPermission() {
             <FieldHint style={{ marginBottom: 16 }}>
               Sharon will only have access to shipments an admin has defined here
             </FieldHint>
-            <div>
+            <div ref={shipmentAccessRef}>
               <FieldLabel style={{ marginBottom: 12 }}>Give Sharon access to</FieldLabel>
               <RadioGroup>
                 <RadioLabel $checked={shipmentAccess === 'all'}>
@@ -105,7 +113,7 @@ export function AccountPermission() {
             <CardTitle>Warehouse Receiving Permissions</CardTitle>
           </CardHeader>
           <CardBody style={{ padding: 0 }}>
-            <FieldRow>
+            <FieldRow ref={warehouseReceivingRef}>
               <div>
                 <FieldLabel>Allow access to Warehouse Receiving</FieldLabel>
               </div>
@@ -123,7 +131,7 @@ export function AccountPermission() {
                 <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
                   <SectionTitle>Default Permissions for newly added warehouses</SectionTitle>
                 </div>
-                <FieldRow>
+                <FieldRow ref={readOnlyAppointmentsRef}>
                   <div>
                     <FieldLabel>Read-only access to the appointments</FieldLabel>
                   </div>
@@ -136,7 +144,7 @@ export function AccountPermission() {
                   </FieldControl>
                 </FieldRow>
                 <Divider />
-                <div style={{ padding: '12px 16px' }}>
+                <div style={{ padding: '12px 16px' }} ref={searchLocationsRef}>
                   <SectionTitle>Allow access to following warehouses</SectionTitle>
                   <SearchContainer>
                     <Input
@@ -158,7 +166,7 @@ export function AccountPermission() {
             <CardTitle>Demurrage & Detention Permissions</CardTitle>
           </CardHeader>
           <CardBody style={{ padding: 0 }}>
-            <FieldRow>
+            <FieldRow ref={demurrageDetentionRef}>
               <div>
                 <FieldLabel>Allow access to Demurrage & Detention data</FieldLabel>
               </div>

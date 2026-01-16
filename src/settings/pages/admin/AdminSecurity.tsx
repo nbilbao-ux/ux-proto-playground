@@ -166,7 +166,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Basic</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Basic')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Basic')}>
                   Upgrade to Basic
                 </Button>
               </FieldControl>
@@ -179,7 +179,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Business</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Business')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Business')}>
                   Upgrade to Business
                 </Button>
               </FieldControl>
@@ -192,7 +192,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Business</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Business')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Business')}>
                   Upgrade to Business
                 </Button>
               </FieldControl>
@@ -205,7 +205,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Business</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Business')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Business')}>
                   Upgrade to Business
                 </Button>
               </FieldControl>
@@ -252,7 +252,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Enterprise</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Enterprise')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Enterprise')}>
                   Upgrade to Enterprise
                 </Button>
               </FieldControl>
@@ -303,7 +303,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Enterprise</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Enterprise')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Enterprise')}>
                   Upgrade to Enterprise
                 </Button>
               </FieldControl>
@@ -329,7 +329,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Enterprise</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Enterprise')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Enterprise')}>
                   Upgrade to Enterprise
                 </Button>
               </FieldControl>
@@ -342,7 +342,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Enterprise</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Enterprise')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Enterprise')}>
                   Upgrade to Enterprise
                 </Button>
               </FieldControl>
@@ -355,7 +355,7 @@ export function AdminSecurity() {
                 <AvailabilityStatus>Available on Basic</AvailabilityStatus>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Basic')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Basic')}>
                   Upgrade to Basic
                 </Button>
               </FieldControl>
@@ -402,7 +402,7 @@ export function AdminSecurity() {
                 </FieldHint>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={() => console.log('Upgrade to Enterprise')}>
+                <Button $variant="secondary" onClick={() => console.log('Upgrade to Enterprise')}>
                   Upgrade to Enterprise
                 </Button>
               </FieldControl>

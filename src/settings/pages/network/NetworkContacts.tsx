@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
 import { Button, Card, CardHeader, CardTitle, Checkbox, Input, Select, VStack } from '@/ui/primitives';
 import { InviteContactModal } from '@/network/components/InviteContactModal';
@@ -7,6 +8,7 @@ import { BulkActionBar } from '@/network/components/BulkActionBar';
 import { EmptyState } from '@/network/components/EmptyState';
 import { StatusBadge } from '@/network/components/StatusBadge';
 import { personService, organizationService } from '@/network/services/entityService';
+import { ContactForm } from './ContactForm';
 import type { Person, Organization, MatchStatus, VerificationStatus } from '@/network/types';
 
 const Table = styled.table`
@@ -23,10 +25,23 @@ const Th = styled.th`
   border-bottom: 1px solid var(--border);
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $clickable?: boolean }>`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  ${(p) => p.$clickable && `
+    cursor: pointer;
+    &:hover {
+      background: rgba(255,255,255,0.02);
+      
+      div {
+        color: rgba(106,167,255,0.95);
+        text-decoration: underline;
+        text-decoration-color: rgba(106,167,255,0.4);
+        text-underline-offset: 3px;
+      }
+    }
+  `}
 `;
 
 const FilterBar = styled.div`
@@ -44,7 +59,9 @@ const FilterGroup = styled.div`
   align-items: center;
 `;
 
-export function NetworkContacts() {
+function ContactsList() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [contacts, setContacts] = useState<Person[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +76,7 @@ export function NetworkContacts() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [location.pathname]); // Refresh when pathname changes
 
   const loadData = async () => {
     setLoading(true);
@@ -234,7 +251,6 @@ export function NetworkContacts() {
                     <Th>Organization</Th>
                     <Th>Match</Th>
                     <Th>Verification</Th>
-                    <Th style={{ width: 120 }} />
                   </tr>
                 </thead>
                 <tbody>
@@ -247,7 +263,10 @@ export function NetworkContacts() {
                           aria-label={`Select ${contact.firstName} ${contact.lastName}`}
                         />
                       </Td>
-                      <Td>
+                      <Td
+                        $clickable
+                        onClick={() => navigate(`/settings/network/contacts/${contact.id}`)}
+                      >
                         <div style={{ fontWeight: 650, color: 'rgba(255,255,255,0.88)' }}>
                           {contact.firstName} {contact.lastName}
                         </div>
@@ -265,17 +284,6 @@ export function NetworkContacts() {
                       </Td>
                       <Td>
                         <StatusBadge type="verification" status={contact.verificationStatus} />
-                      </Td>
-                      <Td style={{ textAlign: 'right' }}>
-                        <Button
-                          $variant="ghost"
-                          style={{ fontSize: 11, padding: '6px 8px' }}
-                          onClick={() => {
-                            // TODO: Open detail panel
-                          }}
-                        >
-                          View
-                        </Button>
                       </Td>
                     </tr>
                   ))}
@@ -296,3 +304,70 @@ export function NetworkContacts() {
     </SettingsPageLayout>
   );
 }
+
+function ContactEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [contact, setContact] = useState<Person | undefined>(undefined);
+
+  useEffect(() => {
+    const loadContact = async () => {
+      if (!id) return;
+      try {
+        const contacts = await personService.getAll();
+        const found = contacts.find((c) => c.id === id);
+        setContact(found);
+      } catch (error) {
+        console.error('Failed to load contact:', error);
+      }
+    };
+    loadContact();
+  }, [id]);
+
+  if (!id) {
+    return <Navigate to="/settings/network/contacts" replace />;
+  }
+
+  if (!contact) {
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
+        Loading...
+      </div>
+    );
+  }
+
+  const handleSubmit = async (contactData: Omit<Person, 'id' | 'createdAt' | 'updatedAt'>) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/network/contacts');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/network/contacts');
+  };
+
+  const handleDelete = async (contactId: string) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsLoading(false);
+    navigate('/settings/network/contacts');
+  };
+
+  return (
+    <ContactForm
+      contact={contact}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function NetworkContacts() {
+  return <Outlet />;
+}
+
+export { ContactsList, ContactEdit };

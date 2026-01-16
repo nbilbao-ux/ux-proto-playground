@@ -56,7 +56,7 @@ export function AccountSecurity() {
               title="Two-Factor Authentication"
               status="Status: Not Set"
               buttonLabel="Enable two-factor authentication"
-              buttonVariant="ghost"
+              buttonVariant="secondary"
               modalTitle="Enable Two-Factor Authentication"
               modalContent={
                 <VStack $gap={16}>
@@ -95,7 +95,7 @@ export function AccountSecurity() {
               title="Password"
               status="Last changed: Dec 4, 2019"
               buttonLabel="Change password"
-              buttonVariant="ghost"
+              buttonVariant="secondary"
               modalTitle="Change Password"
               modalContent={
                 <VStack $gap={16}>
@@ -152,7 +152,7 @@ export function AccountSecurity() {
                   Link a Google Account
                 </>
               }
-              buttonVariant="ghost"
+              buttonVariant="secondary"
               modalTitle="Link Google Account"
               modalContent={
                 <VStack $gap={16}>
@@ -211,11 +211,11 @@ export function AccountSecurity() {
                     <Td>{s.lastSeen}</Td>
                     <Td style={{ textAlign: 'right' }}>
                       {s.current ? (
-                        <Button $variant="ghost" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
+                        <Button $variant="secondary" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
                           Revoke
                         </Button>
                       ) : (
-                        <Button $variant="ghost" onClick={() => setSessions((prev) => prev.filter((x) => x.id !== s.id))}>
+                        <Button $variant="secondary" onClick={() => setSessions((prev) => prev.filter((x) => x.id !== s.id))}>
                           Revoke
                         </Button>
                       )}

@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { SETTINGS_NAV, type SettingsNavSection } from '@/settings/taxonomy';
+import { searchSettingsFields, groupSearchResultsByPage, type SearchableField } from '@/settings/searchIndex';
 import { Input, Muted, VStack } from '@/ui/primitives';
 
 const Shell = styled.div`
@@ -63,6 +64,39 @@ const NavItem = styled(NavLink)`
   }
 `;
 
+const FieldMatchItem = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.82);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+
+  &:hover { background: rgba(255,255,255,0.04); }
+
+  .field-label {
+    font-weight: 500;
+    color: rgba(255,255,255,0.88);
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.56);
+  }
+`;
+
+const FieldMatchContainer = styled.div`
+  padding-left: 20px;
+  margin-top: 4px;
+`;
+
 const Content = styled.main`
   min-width: 0;
   display: flex;
@@ -88,16 +122,100 @@ function filterNavByQuery(nav: SettingsNavSection[], q: string): SettingsNavSect
     .filter((s) => s.pages.length > 0);
 }
 
+type SearchResult = {
+  type: 'page' | 'field';
+  pagePath: string;
+  pageLabel: string;
+  field?: SearchableField;
+};
+
 export function SettingsShell() {
   const [query, setQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const filtered = useMemo(() => filterNavByQuery(SETTINGS_NAV, query), [query]);
+  // Get page-level matches (original search)
+  const pageMatches = useMemo(() => filterNavByQuery(SETTINGS_NAV, query), [query]);
+  
+  // Get field-level matches (enhanced search)
+  const fieldMatches = useMemo(() => {
+    if (!query.trim()) return [];
+    return searchSettingsFields(query);
+  }, [query]);
+
+  // Group field matches by page
+  const fieldMatchesByPage = useMemo(() => {
+    return groupSearchResultsByPage(fieldMatches);
+  }, [fieldMatches]);
+
+  // Combine results: pages that match at page level OR have field matches
+  const allMatchingPages = useMemo(() => {
+    const pagePaths = new Set<string>();
+    
+    // Add pages from page-level search
+    pageMatches.forEach(section => {
+      section.pages.forEach(page => pagePaths.add(page.path));
+    });
+    
+    // Add pages from field-level search
+    fieldMatchesByPage.forEach((_, path) => {
+      pagePaths.add(path);
+    });
+    
+    return Array.from(pagePaths);
+  }, [pageMatches, fieldMatchesByPage]);
+
+  // Build combined results
+  const searchResults = useMemo(() => {
+    if (!query.trim()) {
+      // No query: show all pages in their sections
+      return SETTINGS_NAV.map(section => ({
+        section,
+        pages: section.pages.map(page => ({
+          page,
+          fieldMatches: [] as SearchableField[],
+        })),
+      }));
+    }
+
+    // Build results from matching pages
+    const results: Array<{
+      section: SettingsNavSection;
+      pages: Array<{
+        page: { label: string; path: string; keywords?: string[] };
+        fieldMatches: SearchableField[];
+      }>;
+    }> = [];
+
+    SETTINGS_NAV.forEach(section => {
+      const matchingPages: Array<{
+        page: { label: string; path: string; keywords?: string[] };
+        fieldMatches: SearchableField[];
+      }> = [];
+
+      section.pages.forEach(page => {
+        if (allMatchingPages.includes(page.path)) {
+          const fieldMatches = fieldMatchesByPage.get(page.path) || [];
+          matchingPages.push({ page, fieldMatches });
+        }
+      });
+
+      if (matchingPages.length > 0) {
+        results.push({ section, pages: matchingPages });
+      }
+    });
+
+    return results;
+  }, [query, allMatchingPages, fieldMatchesByPage]);
 
   const activeLabel = useMemo(() => {
     const hit = SETTINGS_NAV.flatMap((s) => s.pages).find((p) => p.path === location.pathname);
     return hit?.label ?? 'Settings';
   }, [location.pathname]);
+
+  const handleFieldMatchClick = (field: SearchableField) => {
+    navigate(`${field.pagePath}?highlight=${field.fieldId}`);
+  };
 
   return (
     <Shell>
@@ -117,22 +235,42 @@ export function SettingsShell() {
           </VStack>
         </SidebarTop>
 
-        {filtered.map((section) => (
-          <div key={section.label}>
-            <SectionLabel>{section.label}</SectionLabel>
+        {searchResults.map((result) => (
+          <div key={result.section.label}>
+            <SectionLabel>{result.section.label}</SectionLabel>
             <VStack $gap={4}>
-              {section.pages.map((page) => (
-                <NavItem key={page.path} to={page.path}>
-                  <span>{page.label}</span>
-                </NavItem>
+              {result.pages.map(({ page, fieldMatches }) => (
+                <div key={page.path}>
+                  <NavItem to={page.path}>
+                    <span>{page.label}</span>
+                  </NavItem>
+                  {fieldMatches.length > 0 && (
+                    <FieldMatchContainer>
+                      <VStack $gap={2}>
+                        {fieldMatches.map((field) => (
+                          <FieldMatchItem
+                            key={field.fieldId}
+                            onClick={() => handleFieldMatchClick(field)}
+                            type="button"
+                          >
+                            <span className="field-label">{field.fieldLabel}</span>
+                            {field.fieldHint && (
+                              <span className="field-hint">{field.fieldHint}</span>
+                            )}
+                          </FieldMatchItem>
+                        ))}
+                      </VStack>
+                    </FieldMatchContainer>
+                  )}
+                </div>
               ))}
             </VStack>
           </div>
         ))}
 
-        {filtered.length === 0 ? (
+        {searchResults.length === 0 && query.trim() ? (
           <div style={{ padding: 12 }}>
-            <Muted>No results for “{query.trim()}”.</Muted>
+            <Muted>No results for "{query.trim()}".</Muted>
           </div>
         ) : null}
       </Sidebar>

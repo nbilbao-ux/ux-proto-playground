@@ -19,7 +19,7 @@ interface SettingsFieldButtonProps {
   status?: string;
   hint?: string;
   buttonLabel: React.ReactNode;
-  buttonVariant?: 'primary' | 'ghost' | 'danger';
+  buttonVariant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   modalTitle: string;
   modalContent: React.ReactNode | ((onClose: () => void) => React.ReactNode);
   modalFooter?: React.ReactNode | ((onClose: () => void) => React.ReactNode);
@@ -32,7 +32,7 @@ export function SettingsFieldButton({
   status,
   hint,
   buttonLabel,
-  buttonVariant = 'ghost',
+  buttonVariant = 'secondary',
   modalTitle,
   modalContent,
   modalFooter,

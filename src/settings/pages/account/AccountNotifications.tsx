@@ -47,60 +47,24 @@ const SectionTitle = styled.div`
   margin-bottom: 8px;
 `;
 
-const NotificationTable = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 0;
-  width: 100%;
-`;
-
-const NotificationTableHeader = styled.div`
-  display: contents;
-`;
-
-const NotificationTableHeaderCell = styled.div`
+const NotificationHeader = styled.div`
   padding: 12px 16px;
+`;
+
+const CheckboxGroup = styled.div`
+  display: flex;
+  gap: 24px;
+  align-items: center;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.88);
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-  
-  &:first-child {
-    text-align: left;
-  }
-  
-  &:not(:first-child) {
-    min-width: 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-  }
-`;
-
-const NotificationTableRow = styled.div`
-  display: contents;
-`;
-
-const NotificationTableCell = styled.div`
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--border);
-  
-  &:first-child {
-    justify-content: flex-start;
-  }
-  
-  &:not(:first-child) {
-    min-width: 80px;
-  }
-`;
-
-const NotificationTableLabel = styled.div`
-  flex: 1;
+  cursor: pointer;
 `;
 
 export function AccountNotifications() {
@@ -179,46 +143,46 @@ export function AccountNotifications() {
             <CardTitle>Freight</CardTitle>
           </CardHeader>
           <CardBody style={{ padding: 0 }}>
-            <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
-              <FieldLabel style={{ marginBottom: 8 }}>
-                Which quotes, bookings and shipments do you want to be notified about?
-              </FieldLabel>
+            <div style={{ padding: '12px 16px' }}>
               <FieldHint style={{ marginBottom: 16 }}>
                 In addition to those that you initiate, you'll only receive notifications for the quotes, bookings, and
                 shipments that you specify here.
               </FieldHint>
-              <RadioGroup>
-                <RadioLabel $checked={freightShipmentScope === 'all'}>
-                  <RadioInput
-                    type="radio"
-                    name="freightShipmentScope"
-                    value="all"
-                    checked={freightShipmentScope === 'all'}
-                    onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
-                  />
-                  All shipments within my organization
-                </RadioLabel>
-                <RadioLabel $checked={freightShipmentScope === 'none'}>
-                  <RadioInput
-                    type="radio"
-                    name="freightShipmentScope"
-                    value="none"
-                    checked={freightShipmentScope === 'none'}
-                    onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
-                  />
-                  None within my organization
-                </RadioLabel>
-                <RadioLabel $checked={freightShipmentScope === 'specific'}>
-                  <RadioInput
-                    type="radio"
-                    name="freightShipmentScope"
-                    value="specific"
-                    checked={freightShipmentScope === 'specific'}
-                    onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
-                  />
-                  Only specific shipments within my organization
-                </RadioLabel>
-              </RadioGroup>
+              <div>
+                <FieldLabel style={{ marginBottom: 12 }}>Which quotes, bookings and shipments do you want to be notified about?</FieldLabel>
+                <RadioGroup>
+                  <RadioLabel $checked={freightShipmentScope === 'all'}>
+                    <RadioInput
+                      type="radio"
+                      name="freightShipmentScope"
+                      value="all"
+                      checked={freightShipmentScope === 'all'}
+                      onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
+                    />
+                    All shipments within my organization
+                  </RadioLabel>
+                  <RadioLabel $checked={freightShipmentScope === 'none'}>
+                    <RadioInput
+                      type="radio"
+                      name="freightShipmentScope"
+                      value="none"
+                      checked={freightShipmentScope === 'none'}
+                      onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
+                    />
+                    None within my organization
+                  </RadioLabel>
+                  <RadioLabel $checked={freightShipmentScope === 'specific'}>
+                    <RadioInput
+                      type="radio"
+                      name="freightShipmentScope"
+                      value="specific"
+                      checked={freightShipmentScope === 'specific'}
+                      onChange={(e) => setFreightShipmentScope(e.target.value as 'all' | 'none' | 'specific')}
+                    />
+                    Only specific shipments within my organization
+                  </RadioLabel>
+                </RadioGroup>
+              </div>
             </div>
             <Divider />
 
@@ -260,292 +224,345 @@ export function AccountNotifications() {
               </FieldControl>
             </FieldRow>
             <Divider />
-            <NotificationTable>
-              <NotificationTableHeader>
-                <NotificationTableHeaderCell>
-                  <FieldLabel style={{ marginBottom: 8 }}>
-                    What kinds of events would you like to be notified about?
-                  </FieldLabel>
-                  <FieldHint style={{ marginBottom: 0 }}>
-                    Receive notifications for shipment events, tasks, and exceptions.
-                  </FieldHint>
-                </NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>In App</NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>Email</NotificationTableHeaderCell>
-              </NotificationTableHeader>
+            <NotificationHeader>
+              <FieldLabel style={{ marginBottom: 8 }}>
+                What kinds of events would you like to be notified about?
+              </FieldLabel>
+              <FieldHint style={{ marginBottom: 0 }}>
+                Receive notifications for shipment events, tasks, and exceptions.
+              </FieldHint>
+            </NotificationHeader>
 
               {/* Quotes and Bookings */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Quotes and Bookings</FieldLabel>
-                    <FieldHint>Notifications related to all booking and quoting activity</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={quotesBookingsInApp}
-                    onChange={setQuotesBookingsInApp}
-                    aria-label="Quotes and Bookings In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={quotesBookingsEmail}
-                    onChange={setQuotesBookingsEmail}
-                    aria-label="Quotes and Bookings Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Quotes and Bookings</FieldLabel>
+                  <FieldHint>Notifications related to all booking and quoting activity</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={quotesBookingsInApp}
+                        onChange={setQuotesBookingsInApp}
+                        aria-label="Quotes and Bookings In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={quotesBookingsEmail}
+                        onChange={setQuotesBookingsEmail}
+                        aria-label="Quotes and Bookings Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Requotes */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Requotes</FieldLabel>
-                    <FieldHint>Receive a notification for price changes and rate expirations</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox checked={requotesInApp} onChange={setRequotesInApp} aria-label="Requotes In App" />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox checked={requotesEmail} onChange={setRequotesEmail} aria-label="Requotes Email" />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Requotes</FieldLabel>
+                  <FieldHint>Receive a notification for price changes and rate expirations</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox checked={requotesInApp} onChange={setRequotesInApp} aria-label="Requotes In App" />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox checked={requotesEmail} onChange={setRequotesEmail} aria-label="Requotes Email" />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking review */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking review</FieldLabel>
-                    <FieldHint>Email notifications for when bookings are amended or completed</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingReviewInApp}
-                    onChange={setBookingReviewInApp}
-                    aria-label="Booking review In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingReviewEmail}
-                    onChange={setBookingReviewEmail}
-                    aria-label="Booking review Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking review</FieldLabel>
+                  <FieldHint>Email notifications for when bookings are amended or completed</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingReviewInApp}
+                        onChange={setBookingReviewInApp}
+                        aria-label="Booking review In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingReviewEmail}
+                        onChange={setBookingReviewEmail}
+                        aria-label="Booking review Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Exceptions and Messages */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Exceptions and Messages</FieldLabel>
-                    <FieldHint>Get notified when an exception occurs or a message is posted</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={exceptionsMessagesInApp}
-                    onChange={setExceptionsMessagesInApp}
-                    aria-label="Exceptions and Messages In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={exceptionsMessagesEmail}
-                    onChange={setExceptionsMessagesEmail}
-                    aria-label="Exceptions and Messages Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Exceptions and Messages</FieldLabel>
+                  <FieldHint>Get notified when an exception occurs or a message is posted</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={exceptionsMessagesInApp}
+                        onChange={setExceptionsMessagesInApp}
+                        aria-label="Exceptions and Messages In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={exceptionsMessagesEmail}
+                        onChange={setExceptionsMessagesEmail}
+                        aria-label="Exceptions and Messages Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Direct Mentions and Replies */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Direct Mentions and Replies</FieldLabel>
-                    <FieldHint>Get notified when you are tagged or when someone responds to your message</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={directMentionsRepliesInApp}
-                    onChange={setDirectMentionsRepliesInApp}
-                    aria-label="Direct Mentions and Replies In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={directMentionsRepliesEmail}
-                    onChange={setDirectMentionsRepliesEmail}
-                    aria-label="Direct Mentions and Replies Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Direct Mentions and Replies</FieldLabel>
+                  <FieldHint>Get notified when you are tagged or when someone responds to your message</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={directMentionsRepliesInApp}
+                        onChange={setDirectMentionsRepliesInApp}
+                        aria-label="Direct Mentions and Replies In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={directMentionsRepliesEmail}
+                        onChange={setDirectMentionsRepliesEmail}
+                        aria-label="Direct Mentions and Replies Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Export documents submission */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Export documents submission</FieldLabel>
-                    <FieldHint>Receive a notification when documents have been digitized</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={exportDocumentsInApp}
-                    onChange={setExportDocumentsInApp}
-                    aria-label="Export documents submission In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={exportDocumentsEmail}
-                    onChange={setExportDocumentsEmail}
-                    aria-label="Export documents submission Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Export documents submission</FieldLabel>
+                  <FieldHint>Receive a notification when documents have been digitized</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={exportDocumentsInApp}
+                        onChange={setExportDocumentsInApp}
+                        aria-label="Export documents submission In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={exportDocumentsEmail}
+                        onChange={setExportDocumentsEmail}
+                        aria-label="Export documents submission Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Shipment document reminders & updates */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Shipment document reminders & updates</FieldLabel>
-                    <FieldHint>Receive notifications when a document is required, or has been updated</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={shipmentDocumentRemindersInApp}
-                    onChange={setShipmentDocumentRemindersInApp}
-                    aria-label="Shipment document reminders In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={shipmentDocumentRemindersEmail}
-                    onChange={setShipmentDocumentRemindersEmail}
-                    aria-label="Shipment document reminders Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Shipment document reminders & updates</FieldLabel>
+                  <FieldHint>Receive notifications when a document is required, or has been updated</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={shipmentDocumentRemindersInApp}
+                        onChange={setShipmentDocumentRemindersInApp}
+                        aria-label="Shipment document reminders In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={shipmentDocumentRemindersEmail}
+                        onChange={setShipmentDocumentRemindersEmail}
+                        aria-label="Shipment document reminders Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Demurrage and Detention */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Demurrage and Detention</FieldLabel>
-                    <FieldHint>Last free day expired, last free day within 2 days</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={demurrageDetentionInApp}
-                    onChange={setDemurrageDetentionInApp}
-                    aria-label="Demurrage and Detention In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={demurrageDetentionEmail}
-                    onChange={setDemurrageDetentionEmail}
-                    aria-label="Demurrage and Detention Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Demurrage and Detention</FieldLabel>
+                  <FieldHint>Last free day expired, last free day within 2 days</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={demurrageDetentionInApp}
+                        onChange={setDemurrageDetentionInApp}
+                        aria-label="Demurrage and Detention In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={demurrageDetentionEmail}
+                        onChange={setDemurrageDetentionEmail}
+                        aria-label="Demurrage and Detention Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Delivery Date Scheduled */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Delivery Date Scheduled</FieldLabel>
-                    <FieldHint>Receive a notification when a delivery date is scheduled or updated</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={deliveryDateScheduledInApp}
-                    onChange={setDeliveryDateScheduledInApp}
-                    aria-label="Delivery Date Scheduled In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={deliveryDateScheduledEmail}
-                    onChange={setDeliveryDateScheduledEmail}
-                    aria-label="Delivery Date Scheduled Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Delivery Date Scheduled</FieldLabel>
+                  <FieldHint>Receive a notification when a delivery date is scheduled or updated</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={deliveryDateScheduledInApp}
+                        onChange={setDeliveryDateScheduledInApp}
+                        aria-label="Delivery Date Scheduled In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={deliveryDateScheduledEmail}
+                        onChange={setDeliveryDateScheduledEmail}
+                        aria-label="Delivery Date Scheduled Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Pickup Date Scheduled */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Pickup Date Scheduled</FieldLabel>
-                    <FieldHint>Receive a notification when a pickup date is scheduled or updated</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={pickupDateScheduledInApp}
-                    onChange={setPickupDateScheduledInApp}
-                    aria-label="Pickup Date Scheduled In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={pickupDateScheduledEmail}
-                    onChange={setPickupDateScheduledEmail}
-                    aria-label="Pickup Date Scheduled Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Pickup Date Scheduled</FieldLabel>
+                  <FieldHint>Receive a notification when a pickup date is scheduled or updated</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={pickupDateScheduledInApp}
+                        onChange={setPickupDateScheduledInApp}
+                        aria-label="Pickup Date Scheduled In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={pickupDateScheduledEmail}
+                        onChange={setPickupDateScheduledEmail}
+                        aria-label="Pickup Date Scheduled Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Tasks */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Tasks</FieldLabel>
-                    <FieldHint>Receive a notification when a task needs action</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox checked={tasksInApp} onChange={setTasksInApp} aria-label="Tasks In App" />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox checked={tasksEmail} onChange={setTasksEmail} aria-label="Tasks Email" />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Tasks</FieldLabel>
+                  <FieldHint>Receive a notification when a task needs action</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox checked={tasksInApp} onChange={setTasksInApp} aria-label="Tasks In App" />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox checked={tasksEmail} onChange={setTasksEmail} aria-label="Tasks Email" />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Schedule changes */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Schedule changes</FieldLabel>
-                    <FieldHint>Get notified about delays and early arrivals</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={scheduleChangesInApp}
-                    onChange={setScheduleChangesInApp}
-                    aria-label="Schedule changes In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={scheduleChangesEmail}
-                    onChange={setScheduleChangesEmail}
-                    aria-label="Schedule changes Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
-            </NotificationTable>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Schedule changes</FieldLabel>
+                  <FieldHint>Get notified about delays and early arrivals</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={scheduleChangesInApp}
+                        onChange={setScheduleChangesInApp}
+                        aria-label="Schedule changes In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={scheduleChangesEmail}
+                        onChange={setScheduleChangesEmail}
+                        aria-label="Schedule changes Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
             <Divider />
           </CardBody>
         </Card>
@@ -556,188 +573,216 @@ export function AccountNotifications() {
             <CardTitle>Order Management</CardTitle>
           </CardHeader>
           <CardBody style={{ padding: 0 }}>
-            <NotificationTable>
-              <NotificationTableHeader>
-                <NotificationTableHeaderCell>
-                  <FieldLabel style={{ marginBottom: 8 }}>
-                    What kinds of events would you like to be notified about?
-                  </FieldLabel>
-                  <FieldHint style={{ marginBottom: 0 }}>
-                    Receive notifications for order management events and exceptions.
-                  </FieldHint>
-                </NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>In App</NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>Email</NotificationTableHeaderCell>
-              </NotificationTableHeader>
+            <NotificationHeader>
+              <FieldLabel style={{ marginBottom: 8 }}>
+                What kinds of events would you like to be notified about?
+              </FieldLabel>
+              <FieldHint style={{ marginBottom: 0 }}>
+                Receive notifications for order management events and exceptions.
+              </FieldHint>
+            </NotificationHeader>
 
               {/* General Events */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>General Events</FieldLabel>
-                    <FieldHint>Receive notifications for general order management events and exceptions.</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={orderManagementGeneralEventsInApp}
-                    onChange={setOrderManagementGeneralEventsInApp}
-                    aria-label="General Events In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={orderManagementGeneralEventsEmail}
-                    onChange={setOrderManagementGeneralEventsEmail}
-                    aria-label="General Events Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>General Events</FieldLabel>
+                  <FieldHint>Receive notifications for general order management events and exceptions.</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={orderManagementGeneralEventsInApp}
+                        onChange={setOrderManagementGeneralEventsInApp}
+                        aria-label="General Events In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={orderManagementGeneralEventsEmail}
+                        onChange={setOrderManagementGeneralEventsEmail}
+                        aria-label="General Events Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been flagged for approval */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been flagged for approval</FieldLabel>
-                    <FieldHint>Receive a notification when there are bookings that need to be approved</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingFlaggedApprovalInApp}
-                    onChange={setBookingFlaggedApprovalInApp}
-                    aria-label="Booking flagged for approval In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingFlaggedApprovalEmail}
-                    onChange={setBookingFlaggedApprovalEmail}
-                    aria-label="Booking flagged for approval Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been flagged for approval</FieldLabel>
+                  <FieldHint>Receive a notification when there are bookings that need to be approved</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingFlaggedApprovalInApp}
+                        onChange={setBookingFlaggedApprovalInApp}
+                        aria-label="Booking flagged for approval In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingFlaggedApprovalEmail}
+                        onChange={setBookingFlaggedApprovalEmail}
+                        aria-label="Booking flagged for approval Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been flagged with violations */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been flagged with violations</FieldLabel>
-                    <FieldHint>Receive a notification when there are bookings with violations</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingFlaggedViolationsInApp}
-                    onChange={setBookingFlaggedViolationsInApp}
-                    aria-label="Booking flagged with violations In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingFlaggedViolationsEmail}
-                    onChange={setBookingFlaggedViolationsEmail}
-                    aria-label="Booking flagged with violations Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been flagged with violations</FieldLabel>
+                  <FieldHint>Receive a notification when there are bookings with violations</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingFlaggedViolationsInApp}
+                        onChange={setBookingFlaggedViolationsInApp}
+                        aria-label="Booking flagged with violations In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingFlaggedViolationsEmail}
+                        onChange={setBookingFlaggedViolationsEmail}
+                        aria-label="Booking flagged with violations Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been approved (shipper) */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been approved (shipper)</FieldLabel>
-                    <FieldHint>As the shipper, receive a notification when my booking has been approved</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingApprovedShipperInApp}
-                    onChange={setBookingApprovedShipperInApp}
-                    aria-label="Booking approved shipper In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingApprovedShipperEmail}
-                    onChange={setBookingApprovedShipperEmail}
-                    aria-label="Booking approved shipper Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been approved (shipper)</FieldLabel>
+                  <FieldHint>As the shipper, receive a notification when my booking has been approved</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingApprovedShipperInApp}
+                        onChange={setBookingApprovedShipperInApp}
+                        aria-label="Booking approved shipper In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingApprovedShipperEmail}
+                        onChange={setBookingApprovedShipperEmail}
+                        aria-label="Booking approved shipper Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been rejected (shipper) */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been rejected (shipper)</FieldLabel>
-                    <FieldHint>As the shipper, receive a notification when my booking has been rejected</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingRejectedShipperInApp}
-                    onChange={setBookingRejectedShipperInApp}
-                    aria-label="Booking rejected shipper In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingRejectedShipperEmail}
-                    onChange={setBookingRejectedShipperEmail}
-                    aria-label="Booking rejected shipper Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been rejected (shipper)</FieldLabel>
+                  <FieldHint>As the shipper, receive a notification when my booking has been rejected</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingRejectedShipperInApp}
+                        onChange={setBookingRejectedShipperInApp}
+                        aria-label="Booking rejected shipper In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingRejectedShipperEmail}
+                        onChange={setBookingRejectedShipperEmail}
+                        aria-label="Booking rejected shipper Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been approved (consignee) */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been approved (consignee)</FieldLabel>
-                    <FieldHint>As the consignee, receive a notification when my booking has been approved</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingApprovedConsigneeInApp}
-                    onChange={setBookingApprovedConsigneeInApp}
-                    aria-label="Booking approved consignee In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingApprovedConsigneeEmail}
-                    onChange={setBookingApprovedConsigneeEmail}
-                    aria-label="Booking approved consignee Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been approved (consignee)</FieldLabel>
+                  <FieldHint>As the consignee, receive a notification when my booking has been approved</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingApprovedConsigneeInApp}
+                        onChange={setBookingApprovedConsigneeInApp}
+                        aria-label="Booking approved consignee In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingApprovedConsigneeEmail}
+                        onChange={setBookingApprovedConsigneeEmail}
+                        aria-label="Booking approved consignee Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
               {/* Booking has been rejected (consignee) */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Booking has been rejected (consignee)</FieldLabel>
-                    <FieldHint>As the consignee, receive a notification when my booking has been rejected</FieldHint>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingRejectedConsigneeInApp}
-                    onChange={setBookingRejectedConsigneeInApp}
-                    aria-label="Booking rejected consignee In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={bookingRejectedConsigneeEmail}
-                    onChange={setBookingRejectedConsigneeEmail}
-                    aria-label="Booking rejected consignee Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
-            </NotificationTable>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Booking has been rejected (consignee)</FieldLabel>
+                  <FieldHint>As the consignee, receive a notification when my booking has been rejected</FieldHint>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingRejectedConsigneeInApp}
+                        onChange={setBookingRejectedConsigneeInApp}
+                        aria-label="Booking rejected consignee In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={bookingRejectedConsigneeEmail}
+                        onChange={setBookingRejectedConsigneeEmail}
+                        aria-label="Booking rejected consignee Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
 
             <Divider />
 
@@ -769,34 +814,31 @@ export function AccountNotifications() {
               </RadioGroup>
             </div>
             <Divider />
-            <NotificationTable>
-              <NotificationTableHeader>
-                <NotificationTableHeaderCell></NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>In App</NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>Email</NotificationTableHeaderCell>
-              </NotificationTableHeader>
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel style={{ marginLeft: 20 }}>Messages</FieldLabel>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={orderMessagesInApp}
-                    onChange={setOrderMessagesInApp}
-                    aria-label="Order Messages In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={orderMessagesEmail}
-                    onChange={setOrderMessagesEmail}
-                    aria-label="Order Messages Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
-            </NotificationTable>
+            <FieldRow>
+              <div>
+                <FieldLabel>Messages</FieldLabel>
+              </div>
+              <FieldControl>
+                <CheckboxGroup>
+                  <CheckboxLabel>
+                    <Checkbox
+                      checked={orderMessagesInApp}
+                      onChange={setOrderMessagesInApp}
+                      aria-label="Order Messages In App"
+                    />
+                    In App
+                  </CheckboxLabel>
+                  <CheckboxLabel>
+                    <Checkbox
+                      checked={orderMessagesEmail}
+                      onChange={setOrderMessagesEmail}
+                      aria-label="Order Messages Email"
+                    />
+                    Email
+                  </CheckboxLabel>
+                </CheckboxGroup>
+              </FieldControl>
+            </FieldRow>
             <Divider />
 
             {/* Order Acknowledgement and Collaboration */}
@@ -933,66 +975,71 @@ export function AccountNotifications() {
 
         {/* Invoicing and Billing Section */}
         <Card>
+          <CardHeader>
+            <CardTitle>Invoicing and Billing</CardTitle>
+          </CardHeader>
           <CardBody style={{ padding: 0 }}>
-            <NotificationTable>
-              <NotificationTableHeader>
-                <NotificationTableHeaderCell>
-                  <FieldLabel style={{ marginBottom: 8 }}>Invoicing and Billing Events</FieldLabel>
-                  <FieldHint style={{ marginBottom: 0 }}>
-                    Receive notfications for specific invoicing and billing events.
-                  </FieldHint>
-                </NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>In App</NotificationTableHeaderCell>
-                <NotificationTableHeaderCell>Email</NotificationTableHeaderCell>
-              </NotificationTableHeader>
+            <NotificationHeader>
+              <FieldLabel style={{ marginBottom: 8 }}>Invoicing and Billing Events</FieldLabel>
+              <FieldHint style={{ marginBottom: 0 }}>
+                Receive notfications for specific invoicing and billing events.
+              </FieldHint>
+            </NotificationHeader>
 
               {/* Invoices and Credit Memos */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Invoices and Credit Memos</FieldLabel>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={invoicesCreditMemosInApp}
-                    onChange={setInvoicesCreditMemosInApp}
-                    aria-label="Invoices and Credit Memos In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={invoicesCreditMemosEmail}
-                    onChange={setInvoicesCreditMemosEmail}
-                    aria-label="Invoices and Credit Memos Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
+              <FieldRow>
+                <div>
+                  <FieldLabel>Invoices and Credit Memos</FieldLabel>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={invoicesCreditMemosInApp}
+                        onChange={setInvoicesCreditMemosInApp}
+                        aria-label="Invoices and Credit Memos In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={invoicesCreditMemosEmail}
+                        onChange={setInvoicesCreditMemosEmail}
+                        aria-label="Invoices and Credit Memos Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
 
               {/* Statement of Account */}
-              <NotificationTableRow>
-                <NotificationTableCell>
-                  <NotificationTableLabel>
-                    <FieldLabel>Statement of Account</FieldLabel>
-                  </NotificationTableLabel>
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={statementOfAccountInApp}
-                    onChange={setStatementOfAccountInApp}
-                    aria-label="Statement of Account In App"
-                  />
-                </NotificationTableCell>
-                <NotificationTableCell>
-                  <Checkbox
-                    checked={statementOfAccountEmail}
-                    onChange={setStatementOfAccountEmail}
-                    aria-label="Statement of Account Email"
-                  />
-                </NotificationTableCell>
-              </NotificationTableRow>
-            </NotificationTable>
-            <Divider />
+              <FieldRow>
+                <div>
+                  <FieldLabel>Statement of Account</FieldLabel>
+                </div>
+                <FieldControl>
+                  <CheckboxGroup>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={statementOfAccountInApp}
+                        onChange={setStatementOfAccountInApp}
+                        aria-label="Statement of Account In App"
+                      />
+                      In App
+                    </CheckboxLabel>
+                    <CheckboxLabel>
+                      <Checkbox
+                        checked={statementOfAccountEmail}
+                        onChange={setStatementOfAccountEmail}
+                        aria-label="Statement of Account Email"
+                      />
+                      Email
+                    </CheckboxLabel>
+                  </CheckboxGroup>
+                </FieldControl>
+              </FieldRow>
+              <Divider />
 
             {/* Which entities */}
             <div style={{ padding: '12px 16px' }}>

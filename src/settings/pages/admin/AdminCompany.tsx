@@ -131,12 +131,12 @@ export function AdminCompany() {
                   </LogoPreview>
                   <ButtonContainer>
                     <VStack $gap={8}>
-                      <Button $variant="ghost" onClick={handleLogoClick} type="button" style={{ width: '100px' }}>
+                      <Button $variant="secondary" onClick={handleLogoClick} type="button" style={{ width: '100px' }}>
                         {logo ? 'Change' : 'Upload'}
                       </Button>
                       {logo && (
                         <Button 
-                          $variant="ghost" 
+                          $variant="secondary" 
                           onClick={() => setLogo(null)} 
                           type="button"
                           style={{ fontSize: 12, padding: '4px 8px' }}
@@ -242,7 +242,7 @@ export function AdminCompany() {
                 <FieldHint>Download a copy of your account data</FieldHint>
               </div>
               <FieldControl>
-                <Button $variant="ghost" onClick={handleDownloadData} type="button">
+                <Button $variant="secondary" onClick={handleDownloadData} type="button">
                   Download
                 </Button>
               </FieldControl>

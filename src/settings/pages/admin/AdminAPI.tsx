@@ -47,7 +47,7 @@ export function AdminAPI() {
               <EmptyStateText>No API credentials yet</EmptyStateText>
               <FieldControl>
                 <Button
-                  $variant="ghost"
+                  $variant="secondary"
                   onClick={() => {
                     // TODO: Implement creation flow
                     console.log('Create API Credential clicked');
@@ -78,7 +78,7 @@ export function AdminAPI() {
               <EmptyStateText>No webhooks yet</EmptyStateText>
               <FieldControl>
                 <Button
-                  $variant="ghost"
+                  $variant="secondary"
                   onClick={() => {
                     // TODO: Implement creation flow
                     console.log('Create Webhook clicked');
@@ -105,7 +105,7 @@ export function AdminAPI() {
               <EmptyStateText>No API keys have been created yet</EmptyStateText>
               <FieldControl>
                 <Button
-                  $variant="ghost"
+                  $variant="secondary"
                   onClick={() => {
                     // TODO: Implement creation flow
                     console.log('Create API Key clicked');

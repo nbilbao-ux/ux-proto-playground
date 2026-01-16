@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
+import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
 import { Button, Card, CardHeader, CardTitle, Checkbox, Input, Select, VStack } from '@/ui/primitives';
 import { AddFacilityModal } from '@/network/components/AddFacilityModal';
@@ -7,6 +8,7 @@ import { BulkActionBar } from '@/network/components/BulkActionBar';
 import { EmptyState } from '@/network/components/EmptyState';
 import { StatusBadge } from '@/network/components/StatusBadge';
 import { facilityService, organizationService } from '@/network/services/entityService';
+import { FacilityForm } from './FacilityForm';
 import type { Facility, Organization, MatchStatus, FacilityType } from '@/network/types';
 
 const Table = styled.table`
@@ -23,10 +25,23 @@ const Th = styled.th`
   border-bottom: 1px solid var(--border);
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $clickable?: boolean }>`
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  ${(p) => p.$clickable && `
+    cursor: pointer;
+    &:hover {
+      background: rgba(255,255,255,0.02);
+      
+      div {
+        color: rgba(106,167,255,0.95);
+        text-decoration: underline;
+        text-decoration-color: rgba(106,167,255,0.4);
+        text-underline-offset: 3px;
+      }
+    }
+  `}
 `;
 
 const FilterBar = styled.div`
@@ -44,7 +59,9 @@ const FilterGroup = styled.div`
   align-items: center;
 `;
 
-export function NetworkFacilities() {
+function FacilitiesList() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +76,7 @@ export function NetworkFacilities() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [location.pathname]); // Refresh when pathname changes (e.g., navigating back from edit)
 
   const loadData = async () => {
     setLoading(true);
@@ -249,7 +266,6 @@ export function NetworkFacilities() {
                     <Th>Organization</Th>
                     <Th>Ownership</Th>
                     <Th>Match</Th>
-                    <Th style={{ width: 120 }} />
                   </tr>
                 </thead>
                 <tbody>
@@ -262,7 +278,10 @@ export function NetworkFacilities() {
                           aria-label={`Select ${facility.name}`}
                         />
                       </Td>
-                      <Td>
+                      <Td
+                        $clickable
+                        onClick={() => navigate(`/settings/network/facilities/${facility.id}`)}
+                      >
                         <div style={{ fontWeight: 650, color: 'rgba(255,255,255,0.88)' }}>{facility.name}</div>
                       </Td>
                       <Td>{getTypeDisplay(facility.type)}</Td>
@@ -273,17 +292,6 @@ export function NetworkFacilities() {
                       </Td>
                       <Td>
                         <StatusBadge type="match" status={facility.matchStatus} />
-                      </Td>
-                      <Td style={{ textAlign: 'right' }}>
-                        <Button
-                          $variant="ghost"
-                          style={{ fontSize: 11, padding: '6px 8px' }}
-                          onClick={() => {
-                            // TODO: Open detail panel
-                          }}
-                        >
-                          View
-                        </Button>
                       </Td>
                     </tr>
                   ))}
@@ -302,3 +310,74 @@ export function NetworkFacilities() {
     </SettingsPageLayout>
   );
 }
+
+function FacilityEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [facility, setFacility] = useState<Facility | undefined>(undefined);
+
+  useEffect(() => {
+    const loadFacility = async () => {
+      if (!id) return;
+      try {
+        const facilities = await facilityService.getAll();
+        const found = facilities.find((f) => f.id === id);
+        setFacility(found);
+      } catch (error) {
+        console.error('Failed to load facility:', error);
+      }
+    };
+    loadFacility();
+  }, [id]);
+
+  if (!id) {
+    return <Navigate to="/settings/network/facilities" replace />;
+  }
+
+  if (!facility) {
+    return (
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
+        Loading...
+      </div>
+    );
+  }
+
+  const handleSubmit = async (facilityData: Omit<Facility, 'id' | 'createdAt' | 'updatedAt'>) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    // In a real app, this would call facilityService.update(id, facilityData)
+    setIsLoading(false);
+    navigate('/settings/network/facilities');
+  };
+
+  const handleCancel = () => {
+    navigate('/settings/network/facilities');
+  };
+
+  const handleDelete = async (facilityId: string) => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    // In a real app, this would call facilityService.delete(facilityId)
+    setIsLoading(false);
+    navigate('/settings/network/facilities');
+  };
+
+  return (
+    <FacilityForm
+      facility={facility}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+    />
+  );
+}
+
+export function NetworkFacilities() {
+  return <Outlet />;
+}
+
+export { FacilitiesList, FacilityEdit };
