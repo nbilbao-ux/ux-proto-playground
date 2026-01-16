@@ -1,5 +1,16 @@
 name: Deploy to GitHub Pages
 
+# This is the PRIMARY deployment method for this repository.
+# IMPORTANT: Disable automatic GitHub Pages deployment in repository settings:
+#   1. Go to Settings > Pages
+#   2. Under "Build and deployment" > "Source", select "GitHub Actions"
+#   3. This ensures only this custom workflow handles deployment
+#
+# Why custom deployment is required:
+#   - Builds TypeScript/React/Vite app (automatic deployment can't build)
+#   - Sets VITE_BASE_PATH environment variable for correct routing
+#   - Handles private npm registry authentication (@ffa/latitude-typescript)
+
 on:
   push:
     branches:
@@ -12,9 +23,10 @@ permissions:
   pages: write
   id-token: write
 
+# Use concurrency to ensure only one deployment runs at a time
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
