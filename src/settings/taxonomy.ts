@@ -13,7 +13,7 @@ export const SETTINGS_NAV: SettingsNavSection[] = [
   {
     label: 'User Account',
     pages: [
-      { label: 'Profile', path: '/settings/account/profile', keywords: ['name', 'avatar', 'email'] },
+      { label: 'Personal Info', path: '/settings/account/profile', keywords: ['name', 'avatar', 'email', 'profile', 'personal'] },
       { label: 'Permission', path: '/settings/account/permission', keywords: ['roles', 'access'] },
       { label: 'Notifications', path: '/settings/account/notifications', keywords: ['email', 'push', 'digest'] },
       { label: 'Security', path: '/settings/account/security', keywords: ['mfa', '2fa', 'sessions', 'password'] },
