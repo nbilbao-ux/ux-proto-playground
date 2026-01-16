@@ -11,7 +11,7 @@ const Wrap = styled.div`
 export function Home() {
   return (
     <Wrap>
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <div>
           <PageTitle>Enterprise app prototype</PageTitle>
           <PageSubtitle>Use this sandbox to iterate on settings IA, patterns, and layouts.</PageSubtitle>
@@ -21,7 +21,7 @@ export function Home() {
           <CardHeader>
             <CardTitle>Settings</CardTitle>
             <Link to="/settings/account/profile">
-              <Button variant="primary">Open settings</Button>
+              <Button $variant="primary">Open settings</Button>
             </Link>
           </CardHeader>
           <CardBody>

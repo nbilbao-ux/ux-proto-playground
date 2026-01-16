@@ -29,17 +29,17 @@ export function BulkActionBar({ selectedCount, onClearSelection, actions }: Bulk
 
   return (
     <Bar>
-      <HStack gap={12} align="center">
+      <HStack $gap={12} $align="center">
         <Tag tone="accent">{selectedCount} selected</Tag>
-        <Button variant="ghost" onClick={onClearSelection}>
+        <Button $variant="ghost" onClick={onClearSelection}>
           Clear selection
         </Button>
       </HStack>
-      <HStack gap={8}>
+      <HStack $gap={8}>
         {actions.map((action, idx) => (
           <Button
             key={idx}
-            variant={action.variant || 'ghost'}
+            $variant={action.variant || 'ghost'}
             onClick={action.onClick}
             disabled={action.disabled}
           >

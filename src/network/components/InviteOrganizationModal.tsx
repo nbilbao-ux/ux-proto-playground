@@ -334,16 +334,16 @@ export function InviteOrganizationModal({
       title="Invite Organization"
       footer={
         <>
-          <Button variant="ghost" onClick={handleClose} disabled={loading}>
+          <Button $variant="ghost" onClick={handleClose} disabled={loading}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading || !canSubmit}>
+          <Button $variant="primary" onClick={handleSubmit} disabled={loading || !canSubmit}>
             {loading ? 'Sending...' : 'Invite'}
           </Button>
         </>
       }
     >
-      <VStack gap={16}>
+      <VStack $gap={16}>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           Invite an organization to join your network. They will receive an email to provide their organization details and create their entity.
         </div>
@@ -411,7 +411,7 @@ export function InviteOrganizationModal({
             <AccordionIcon $isOpen={showDetails}>▼</AccordionIcon>
           </AccordionButton>
           <AccordionContent $isOpen={showDetails}>
-            <VStack gap={12} style={{ paddingTop: 8 }}>
+            <VStack $gap={12} style={{ paddingTop: 8 }}>
               <FieldRow>
                 <div>
                   <FieldLabel>Country</FieldLabel>

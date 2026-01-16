@@ -36,12 +36,12 @@ export function NetworkLocations() {
 
   return (
     <SettingsPageLayout title="Locations" subtitle="Manage operational locations used across shipments, compliance, and routing.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Locations</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = draftName.trim();
                 if (!name) return;
@@ -78,7 +78,7 @@ export function NetworkLocations() {
                     <Td>{r.country}</Td>
                     <Td>{r.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag>Draft</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
+                      <Button $variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
                         Remove
                       </Button>
                     </Td>

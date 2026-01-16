@@ -22,7 +22,7 @@ export function ShipmentsOptimization() {
 
   return (
     <SettingsPageLayout title="Optimization" subtitle="Optimization policy used for suggested routing and mode decisions.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Policy</CardTitle>

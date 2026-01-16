@@ -146,11 +146,11 @@ export function NetworkFacilities() {
       title="Facilities & Locations"
       subtitle="Manage operational locations: warehouses, distribution centers, offices, and ports."
     >
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Facilities</CardTitle>
-            <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
+            <Button $variant="primary" onClick={() => setIsAddModalOpen(true)}>
               Add Facility
             </Button>
           </CardHeader>
@@ -275,7 +275,7 @@ export function NetworkFacilities() {
                       </Td>
                       <Td style={{ textAlign: 'right' }}>
                         <Button
-                          variant="ghost"
+                          $variant="ghost"
                           style={{ fontSize: 11, padding: '6px 8px' }}
                           onClick={() => {
                             // TODO: Open detail panel

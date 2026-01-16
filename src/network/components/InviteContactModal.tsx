@@ -321,16 +321,16 @@ export function InviteContactModal({
       title="Invite"
       footer={
         <>
-          <Button variant="ghost" onClick={handleClose} disabled={loading}>
+          <Button $variant="ghost" onClick={handleClose} disabled={loading}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading || !canSubmit}>
+          <Button $variant="primary" onClick={handleSubmit} disabled={loading || !canSubmit}>
             {loading ? 'Sending...' : 'Invite'}
           </Button>
         </>
       }
     >
-      <VStack gap={16}>
+      <VStack $gap={16}>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           Invite someone to join your network. They will receive an email to provide their information and choose or create an organization.
         </div>

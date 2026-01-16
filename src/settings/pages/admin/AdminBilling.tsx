@@ -9,7 +9,7 @@ export function AdminBilling() {
 
   return (
     <SettingsPageLayout title="Billing" subtitle="Plan, invoices, and payment configuration for the workspace.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Plan</CardTitle>
@@ -62,8 +62,8 @@ export function AdminBilling() {
           </CardHeader>
           <CardBody>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <Button variant="ghost">Download invoices</Button>
-              <Button variant="primary">Contact billing</Button>
+              <Button $variant="ghost">Download invoices</Button>
+              <Button $variant="primary">Contact billing</Button>
             </div>
           </CardBody>
         </Card>

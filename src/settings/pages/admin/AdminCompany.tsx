@@ -9,7 +9,7 @@ export function AdminCompany() {
 
   return (
     <SettingsPageLayout title="Company" subtitle="Workspace-level configuration used across the organization.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Organization</CardTitle>

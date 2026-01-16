@@ -23,12 +23,12 @@ export function NetworkSuppliers() {
 
   return (
     <SettingsPageLayout title="Suppliers" subtitle="Supplier directory used for purchase orders, compliance, and routing.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Supplier directory</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = draft.trim();
                 if (!name) return;
@@ -52,7 +52,7 @@ export function NetworkSuppliers() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {s.tier === 'Preferred' ? <Tag tone="accent">Preferred</Tag> : <Tag>Standard</Tag>}
-                  <Button variant="ghost" onClick={() => setSuppliers((prev) => prev.filter((x) => x.id !== s.id))}>
+                  <Button $variant="ghost" onClick={() => setSuppliers((prev) => prev.filter((x) => x.id !== s.id))}>
                     Remove
                   </Button>
                 </div>

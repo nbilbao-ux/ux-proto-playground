@@ -68,12 +68,12 @@ export function MatchCandidateSelector({
 
   if (candidates.length === 0) {
     return (
-      <VStack gap={12}>
+      <VStack $gap={12}>
         <div style={{ padding: 20, textAlign: 'center', color: 'var(--text-muted)' }}>
           No matches found in Global Network
         </div>
         {onCreateNew && (
-          <Button variant="primary" onClick={onCreateNew}>
+          <Button $variant="primary" onClick={onCreateNew}>
             Create new entity
           </Button>
         )}
@@ -82,7 +82,7 @@ export function MatchCandidateSelector({
   }
 
   return (
-    <VStack gap={12}>
+    <VStack $gap={12}>
       <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
         Found {candidates.length} potential match{candidates.length !== 1 ? 'es' : ''} in Global Network:
       </div>
@@ -93,7 +93,7 @@ export function MatchCandidateSelector({
           onClick={() => onSelect(candidate.globalEntityId)}
         >
           <CardBody>
-            <HStack justify="space-between" align="flex-start">
+            <HStack $justify="space-between" $align="flex-start">
               <div style={{ flex: 1 }}>
                 <CandidateName>{candidate.name}</CandidateName>
                 {candidate.details && (
@@ -125,7 +125,7 @@ export function MatchCandidateSelector({
       ))}
       {onCreateNew && (
         <div style={{ paddingTop: 8 }}>
-          <Button variant="ghost" onClick={onCreateNew} style={{ width: '100%' }}>
+          <Button $variant="ghost" onClick={onCreateNew} style={{ width: '100%' }}>
             Create new (no match)
           </Button>
         </div>

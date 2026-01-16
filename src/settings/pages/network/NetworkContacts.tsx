@@ -134,11 +134,11 @@ export function NetworkContacts() {
       title="Contacts"
       subtitle="Manage contacts and people in your network directory."
     >
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Contacts</CardTitle>
-            <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
+            <Button $variant="primary" onClick={() => setIsAddModalOpen(true)}>
               Invite Contact
             </Button>
           </CardHeader>
@@ -267,7 +267,7 @@ export function NetworkContacts() {
                       </Td>
                       <Td style={{ textAlign: 'right' }}>
                         <Button
-                          variant="ghost"
+                          $variant="ghost"
                           style={{ fontSize: 11, padding: '6px 8px' }}
                           onClick={() => {
                             // TODO: Open detail panel

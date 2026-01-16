@@ -36,12 +36,12 @@ export function AdminWebhooks() {
 
   return (
     <SettingsPageLayout title="Webhooks" subtitle="Send events to external systems. Use this page to prototype key governance patterns.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Create webhook</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const ep = endpoint.trim();
                 if (!ep) return;
@@ -74,7 +74,7 @@ export function AdminWebhooks() {
                     <Td>{h.event}</Td>
                     <Td>{h.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag tone="warning">Paused</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button variant="ghost" onClick={() => setHooks((prev) => prev.filter((x) => x.id !== h.id))}>
+                      <Button $variant="ghost" onClick={() => setHooks((prev) => prev.filter((x) => x.id !== h.id))}>
                         Remove
                       </Button>
                     </Td>

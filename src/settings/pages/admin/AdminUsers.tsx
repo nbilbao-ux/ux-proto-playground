@@ -35,7 +35,7 @@ export function AdminUsers() {
 
   return (
     <SettingsPageLayout title="Users" subtitle="Manage members, roles, and invitations for your workspace.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Members</CardTitle>
@@ -48,7 +48,7 @@ export function AdminUsers() {
                 style={{ width: 260 }}
               />
               <Button
-                variant="primary"
+                $variant="primary"
                 onClick={() => {
                   const email = inviteEmail.trim();
                   if (!email) return;
@@ -83,7 +83,7 @@ export function AdminUsers() {
                     <Td>{u.role}</Td>
                     <Td>{u.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag tone="warning">Invited</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button variant="ghost" onClick={() => setUsers((prev) => prev.filter((x) => x.id !== u.id))}>
+                      <Button $variant="ghost" onClick={() => setUsers((prev) => prev.filter((x) => x.id !== u.id))}>
                         Remove
                       </Button>
                     </Td>

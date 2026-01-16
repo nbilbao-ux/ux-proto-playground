@@ -41,7 +41,7 @@ export function ContactDetailPanel({ contact, onClose }: ContactDetailPanelProps
 
   return (
     <Panel>
-      <VStack gap={20}>
+      <VStack $gap={20}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 650, color: 'rgba(255,255,255,0.88)' }}>
@@ -52,7 +52,7 @@ export function ContactDetailPanel({ contact, onClose }: ContactDetailPanelProps
               <StatusBadge type="verification" status={contact.verificationStatus} />
             </div>
           </div>
-          <Button variant="ghost" onClick={onClose}>
+          <Button $variant="ghost" onClick={onClose}>
             Close
           </Button>
         </div>
@@ -62,7 +62,7 @@ export function ContactDetailPanel({ contact, onClose }: ContactDetailPanelProps
             <CardTitle>Details</CardTitle>
           </CardHeader>
           <CardBody>
-            <VStack gap={12}>
+            <VStack $gap={12}>
               {contact.email && (
                 <InfoRow>
                   <InfoLabel>Email</InfoLabel>

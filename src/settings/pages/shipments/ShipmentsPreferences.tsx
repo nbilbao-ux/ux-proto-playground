@@ -9,7 +9,7 @@ export function ShipmentsPreferences() {
 
   return (
     <SettingsPageLayout title="Shipments Preferences" subtitle="Default behaviors applied when creating and tracking shipments.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Defaults</CardTitle>

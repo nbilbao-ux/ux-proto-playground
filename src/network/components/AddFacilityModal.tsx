@@ -141,11 +141,11 @@ export function AddFacilityModal({
 
   const footer = step === 'form' ? (
     <>
-      <Button variant="ghost" onClick={handleClose} disabled={loading}>
+      <Button $variant="ghost" onClick={handleClose} disabled={loading}>
         Cancel
       </Button>
       <Button
-        variant="primary"
+        $variant="primary"
         onClick={handleSubmit}
         disabled={loading || !name.trim() || !organizationId}
       >
@@ -154,11 +154,11 @@ export function AddFacilityModal({
     </>
   ) : (
     <>
-      <Button variant="ghost" onClick={() => setStep('form')} disabled={loading}>
+      <Button $variant="ghost" onClick={() => setStep('form')} disabled={loading}>
         Back
       </Button>
       <Button
-        variant="ghost"
+        $variant="ghost"
         onClick={createFacility}
         disabled={loading}
       >
@@ -179,7 +179,7 @@ export function AddFacilityModal({
       footer={footer}
     >
       {step === 'form' ? (
-        <VStack gap={16}>
+        <VStack $gap={16}>
           <FieldRow>
             <div>
               <FieldLabel>Facility name *</FieldLabel>
@@ -258,7 +258,7 @@ export function AddFacilityModal({
               <FieldHint>Optional - will be validated and normalized</FieldHint>
             </div>
             <FieldControl>
-              <VStack gap={8}>
+              <VStack $gap={8}>
                 <Input
                   value={addressLine1}
                   onChange={(e) => setAddressLine1(e.target.value)}
@@ -302,7 +302,7 @@ export function AddFacilityModal({
           </FieldRow>
         </VStack>
       ) : step === 'address' ? (
-        <VStack gap={12}>
+        <VStack $gap={12}>
           {validating ? (
             <div style={{ padding: 20, textAlign: 'center', color: 'var(--text-muted)' }}>
               Validating address...

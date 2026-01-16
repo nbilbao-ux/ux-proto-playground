@@ -9,7 +9,7 @@ export function AdminNotifications() {
 
   return (
     <SettingsPageLayout title="Notifications" subtitle="Workspace-wide notifications for incidents and system events.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>System events</CardTitle>

@@ -37,7 +37,7 @@ export function AccountSecurity() {
 
   return (
     <SettingsPageLayout title="Security" subtitle="Secure access to your account and review active sessions.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Authentication</CardTitle>
@@ -81,11 +81,11 @@ export function AccountSecurity() {
                     <Td>{s.lastSeen}</Td>
                     <Td style={{ textAlign: 'right' }}>
                       {s.current ? (
-                        <Button variant="ghost" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
+                        <Button $variant="ghost" disabled style={{ opacity: 0.6, cursor: 'not-allowed' }}>
                           Revoke
                         </Button>
                       ) : (
-                        <Button variant="ghost" onClick={() => setSessions((prev) => prev.filter((x) => x.id !== s.id))}>
+                        <Button $variant="ghost" onClick={() => setSessions((prev) => prev.filter((x) => x.id !== s.id))}>
                           Revoke
                         </Button>
                       )}

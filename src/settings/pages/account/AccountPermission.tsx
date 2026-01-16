@@ -26,9 +26,9 @@ export function AccountPermission() {
     <SettingsPageLayout
       title="Permission"
       subtitle="Control how your account is allowed to interact with company data and APIs."
-      headerRight={<Button variant="ghost">Request elevated access</Button>}
+      headerRight={<Button $variant="ghost">Request elevated access</Button>}
     >
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Role and access</CardTitle>

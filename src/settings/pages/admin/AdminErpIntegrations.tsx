@@ -25,7 +25,7 @@ const INTEGRATIONS: Integration[] = [
 export function AdminErpIntegrations() {
   return (
     <SettingsPageLayout title="ERP Integrations" subtitle="Connect and manage enterprise integrations for data synchronization.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Grid>
           {INTEGRATIONS.map((i) => (
             <Card key={i.id}>
@@ -36,7 +36,7 @@ export function AdminErpIntegrations() {
               <CardBody>
                 <Muted>{i.desc}</Muted>
                 <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant={i.status === 'Connected' ? 'ghost' : 'primary'}>
+                  <Button $variant={i.status === 'Connected' ? 'ghost' : 'primary'}>
                     {i.status === 'Connected' ? 'Manage' : 'Connect'}
                   </Button>
                 </div>

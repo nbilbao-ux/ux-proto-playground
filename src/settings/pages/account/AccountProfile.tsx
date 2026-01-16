@@ -80,13 +80,13 @@ export function AccountProfile() {
                 <AvatarPreview $imageUrl={profilePicture || undefined}>
                   {!profilePicture && getInitials()}
                 </AvatarPreview>
-                <VStack gap={8}>
-                  <Button variant="ghost" onClick={handleAvatarClick} type="button">
+                <VStack $gap={8}>
+                  <Button $variant="ghost" onClick={handleAvatarClick} type="button">
                     {profilePicture ? 'Change' : 'Upload'}
                   </Button>
                   {profilePicture && (
                     <Button 
-                      variant="ghost" 
+                      $variant="ghost" 
                       onClick={() => setProfilePicture(null)} 
                       type="button"
                       style={{ fontSize: 12, padding: '4px 8px' }}

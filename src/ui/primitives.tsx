@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const HStack = styled.div<{ gap?: number; align?: string; justify?: string }>`
+export const HStack = styled.div<{ $gap?: number; $align?: string; $justify?: string }>`
   display: flex;
-  align-items: ${(p) => p.align ?? 'center'};
-  justify-content: ${(p) => p.justify ?? 'flex-start'};
-  gap: ${(p) => (p.gap ?? 12)}px;
+  align-items: ${(p) => p.$align ?? 'center'};
+  justify-content: ${(p) => p.$justify ?? 'flex-start'};
+  gap: ${(p) => (p.$gap ?? 12)}px;
 `;
 
-export const VStack = styled.div<{ gap?: number }>`
+export const VStack = styled.div<{ $gap?: number }>`
   display: flex;
   flex-direction: column;
-  gap: ${(p) => (p.gap ?? 12)}px;
+  gap: ${(p) => (p.$gap ?? 12)}px;
 `;
 
 export const PageTitle = styled.h1`
@@ -122,7 +122,7 @@ export const Select = styled.select`
   }
 `;
 
-export const Button = styled.button<{ variant?: 'primary' | 'ghost' | 'danger' }>`
+export const Button = styled.button<{ $variant?: 'primary' | 'ghost' | 'danger' }>`
   border-radius: 10px;
   border: 1px solid var(--border);
   padding: 9px 10px;
@@ -139,19 +139,19 @@ export const Button = styled.button<{ variant?: 'primary' | 'ghost' | 'danger' }
   }
 
   ${(p) =>
-    p.variant === 'primary'
+    p.$variant === 'primary'
       ? `border-color: rgba(106,167,255,0.30);
          background: linear-gradient(180deg, rgba(106,167,255,0.22), rgba(106,167,255,0.12));
          &:hover:not(:disabled) { background: linear-gradient(180deg, rgba(106,167,255,0.28), rgba(106,167,255,0.14)); }`
       : ''}
 
   ${(p) =>
-    p.variant === 'ghost'
+    p.$variant === 'ghost'
       ? `background: transparent; border-color: transparent; &:hover:not(:disabled) { background: rgba(255,255,255,0.05); }`
       : ''}
 
   ${(p) =>
-    p.variant === 'danger'
+    p.$variant === 'danger'
       ? `border-color: rgba(255,92,122,0.30);
          background: linear-gradient(180deg, rgba(255,92,122,0.20), rgba(255,92,122,0.10));
          &:hover:not(:disabled) { background: linear-gradient(180deg, rgba(255,92,122,0.26), rgba(255,92,122,0.12)); }`
@@ -354,7 +354,7 @@ export function Modal(props: {
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
           <ModalTitle>{props.title}</ModalTitle>
-          <Button variant="ghost" onClick={props.onClose} aria-label="Close modal">
+          <Button $variant="ghost" onClick={props.onClose} aria-label="Close modal">
             ×
           </Button>
         </ModalHeader>

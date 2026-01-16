@@ -22,7 +22,7 @@ export function ShipmentsCapital() {
 
   return (
     <SettingsPageLayout title="Capital" subtitle="Funding and payment preferences applied to eligible shipments.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Capital program</CardTitle>

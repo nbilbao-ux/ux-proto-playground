@@ -56,16 +56,16 @@ export function InviteToConnectModal({
       title="Invite to Connect"
       footer={
         <>
-          <Button variant="ghost" onClick={handleClose} disabled={loading}>
+          <Button $variant="ghost" onClick={handleClose} disabled={loading}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading || !email.trim()}>
+          <Button $variant="primary" onClick={handleSubmit} disabled={loading || !email.trim()}>
             {loading ? 'Sending...' : 'Send Invitation'}
           </Button>
         </>
       }
     >
-      <VStack gap={16}>
+      <VStack $gap={16}>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           Invite <strong>{organization.name}</strong> to connect their account. They will receive an email invitation to link accounts.
         </div>

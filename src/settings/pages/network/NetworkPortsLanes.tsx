@@ -31,12 +31,12 @@ export function NetworkPortsLanes() {
 
   return (
     <SettingsPageLayout title="Preferred Ports & Lanes" subtitle="Bias routing and carrier selection by defining preferred lanes.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Preferred lanes</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 if (!canAdd) return;
                 setItems((prev) => [
@@ -69,7 +69,7 @@ export function NetworkPortsLanes() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Tag tone="accent">Preferred</Tag>
-                    <Button variant="ghost" onClick={() => setItems((prev) => prev.filter((x) => x.id !== l.id))}>
+                    <Button $variant="ghost" onClick={() => setItems((prev) => prev.filter((x) => x.id !== l.id))}>
                       Remove
                     </Button>
                   </div>

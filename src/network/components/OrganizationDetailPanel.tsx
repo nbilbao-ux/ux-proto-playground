@@ -81,7 +81,7 @@ export function OrganizationDetailPanel({
 
   return (
     <Panel>
-      <VStack gap={20}>
+      <VStack $gap={20}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 650, color: 'rgba(255,255,255,0.88)' }}>
@@ -93,7 +93,7 @@ export function OrganizationDetailPanel({
               <StatusBadge type="connection" status={organization.connectionStatus} />
             </div>
           </div>
-          <Button variant="ghost" onClick={onClose}>
+          <Button $variant="ghost" onClick={onClose}>
             Close
           </Button>
         </div>
@@ -103,7 +103,7 @@ export function OrganizationDetailPanel({
             <CardTitle>Details</CardTitle>
           </CardHeader>
           <CardBody>
-            <VStack gap={12}>
+            <VStack $gap={12}>
               <InfoRow>
                 <InfoLabel>Domain</InfoLabel>
                 <InfoValue>{organization.domain || '—'}</InfoValue>
@@ -137,7 +137,7 @@ export function OrganizationDetailPanel({
               <InfoRow>
                 <InfoLabel>Tags</InfoLabel>
                 <InfoValue>
-                  <HStack gap={4}>
+                  <HStack $gap={4}>
                     {organization.tags.length > 0 ? (
                       organization.tags.map((tag) => (
                         <Tag
@@ -168,14 +168,14 @@ export function OrganizationDetailPanel({
             <CardTitle>Actions</CardTitle>
           </CardHeader>
           <CardBody>
-            <VStack gap={8}>
+            <VStack $gap={8}>
               {canInviteToConnect(organization) && (
-                <Button variant="primary" onClick={() => setIsInviteConnectOpen(true)}>
+                <Button $variant="primary" onClick={() => setIsInviteConnectOpen(true)}>
                   Invite to Connect
                 </Button>
               )}
               {canInviteToJoin(organization) && (
-                <Button variant="primary" onClick={() => setIsInviteJoinOpen(true)}>
+                <Button $variant="primary" onClick={() => setIsInviteJoinOpen(true)}>
                   Invite to Join
                 </Button>
               )}
@@ -196,7 +196,7 @@ export function OrganizationDetailPanel({
               <CardTitle>Contacts ({contacts.length})</CardTitle>
             </CardHeader>
             <CardBody>
-              <VStack gap={8}>
+              <VStack $gap={8}>
                 {contacts.map((contact) => (
                   <div key={contact.id} style={{ padding: 8, background: 'rgba(255,255,255,0.02)', borderRadius: 8 }}>
                     <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>
@@ -220,7 +220,7 @@ export function OrganizationDetailPanel({
               <CardTitle>Facilities ({facilities.length})</CardTitle>
             </CardHeader>
             <CardBody>
-              <VStack gap={8}>
+              <VStack $gap={8}>
                 {facilities.map((facility) => (
                   <div key={facility.id} style={{ padding: 8, background: 'rgba(255,255,255,0.02)', borderRadius: 8 }}>
                     <div style={{ fontWeight: 600, color: 'rgba(255,255,255,0.88)' }}>{facility.name}</div>

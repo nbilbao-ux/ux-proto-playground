@@ -396,11 +396,11 @@ export function NetworkOrganizations() {
       title="Organizations"
       subtitle="Manage your organization directory. Match and connect with partners in the Global Network."
     >
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Organizations</CardTitle>
-            <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
+            <Button $variant="primary" onClick={() => setIsAddModalOpen(true)}>
               Invite
             </Button>
           </CardHeader>
@@ -624,7 +624,7 @@ export function NetworkOrganizations() {
                         <Td style={{ textAlign: 'right' }}>
                           {showResendButton && (
                             <Button
-                              variant="ghost"
+                              $variant="ghost"
                               style={{ fontSize: 11, padding: '6px 8px' }}
                               onClick={() => handleResendInvite(org)}
                               disabled={resendingInviteId === pendingInv?.id}

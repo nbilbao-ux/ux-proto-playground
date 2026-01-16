@@ -23,12 +23,12 @@ export function NetworkCarriers() {
 
   return (
     <SettingsPageLayout title="Carriers" subtitle="Carrier preferences influence routing, tendering, and recommendations.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Carrier preferences</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = draft.trim();
                 if (!name) return;
@@ -57,7 +57,7 @@ export function NetworkCarriers() {
                     onChange={(checked) => setCarriers((prev) => prev.map((x) => (x.id === c.id ? { ...x, preferred: checked } : x)))}
                     aria-label={`Toggle preferred carrier ${c.name}`}
                   />
-                  <Button variant="ghost" onClick={() => setCarriers((prev) => prev.filter((x) => x.id !== c.id))}>
+                  <Button $variant="ghost" onClick={() => setCarriers((prev) => prev.filter((x) => x.id !== c.id))}>
                     Remove
                   </Button>
                 </div>

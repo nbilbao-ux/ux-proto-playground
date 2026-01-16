@@ -15,7 +15,7 @@ export function SettingsPageLayout(props: {
 }) {
   return (
     <Wrap>
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
           <div>
             <PageTitle>{props.title}</PageTitle>

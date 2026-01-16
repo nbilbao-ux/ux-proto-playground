@@ -35,12 +35,12 @@ export function ShipmentsBuyersConsolidation() {
 
   return (
     <SettingsPageLayout title="Buyer's Consolidation" subtitle="Rules that group purchase orders into consolidated shipments.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Rules</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = (draftName || 'New rule').trim();
                 setRules((prev) => [

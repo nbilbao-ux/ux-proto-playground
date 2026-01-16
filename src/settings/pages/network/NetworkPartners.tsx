@@ -22,12 +22,12 @@ export function NetworkPartners() {
 
   return (
     <SettingsPageLayout title="Partners" subtitle="Manage partner organizations and connection status.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Connections</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = draft.trim();
                 if (!name) return;
@@ -51,7 +51,7 @@ export function NetworkPartners() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {p.status === 'Connected' ? <Tag tone="success">Connected</Tag> : <Tag tone="warning">Pending</Tag>}
-                  <Button variant="ghost" onClick={() => setPartners((prev) => prev.filter((x) => x.id !== p.id))}>
+                  <Button $variant="ghost" onClick={() => setPartners((prev) => prev.filter((x) => x.id !== p.id))}>
                     Remove
                   </Button>
                 </div>

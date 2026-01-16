@@ -96,7 +96,7 @@ export function SettingsShell() {
     <Shell>
       <Sidebar>
         <SidebarTop>
-          <VStack gap={10}>
+          <VStack $gap={10}>
             <BackLink to="/" end>
               <span aria-hidden="true">‹</span>
               <span>Back to app</span>
@@ -113,7 +113,7 @@ export function SettingsShell() {
         {filtered.map((section) => (
           <div key={section.label}>
             <SectionLabel>{section.label}</SectionLabel>
-            <VStack gap={4}>
+            <VStack $gap={4}>
               {section.pages.map((page) => (
                 <NavItem key={page.path} to={page.path}>
                   <span>{page.label}</span>

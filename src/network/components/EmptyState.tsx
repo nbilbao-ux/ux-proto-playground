@@ -35,19 +35,19 @@ interface EmptyStateProps {
 export function EmptyState({ title, description, primaryAction, secondaryAction }: EmptyStateProps) {
   return (
     <EmptyWrap>
-      <VStack gap={12}>
+      <VStack $gap={12}>
         <div>
           <EmptyTitle>{title}</EmptyTitle>
           {description && <EmptyDescription>{description}</EmptyDescription>}
         </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           {primaryAction && (
-            <Button variant="primary" onClick={primaryAction.onClick}>
+            <Button $variant="primary" onClick={primaryAction.onClick}>
               {primaryAction.label}
             </Button>
           )}
           {secondaryAction && (
-            <Button variant="ghost" onClick={secondaryAction.onClick}>
+            <Button $variant="ghost" onClick={secondaryAction.onClick}>
               {secondaryAction.label}
             </Button>
           )}

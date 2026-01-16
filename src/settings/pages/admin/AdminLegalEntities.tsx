@@ -35,12 +35,12 @@ export function AdminLegalEntities() {
 
   return (
     <SettingsPageLayout title="Legal Entities" subtitle="Entities used for contracts, billing, compliance, and reporting.">
-      <VStack gap={14}>
+      <VStack $gap={14}>
         <Card>
           <CardHeader>
             <CardTitle>Entities</CardTitle>
             <Button
-              variant="primary"
+              $variant="primary"
               onClick={() => {
                 const name = draft.trim();
                 if (!name) return;
@@ -72,7 +72,7 @@ export function AdminLegalEntities() {
                     <Td>{r.country}</Td>
                     <Td>{r.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag>Inactive</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
+                      <Button $variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
                         Remove
                       </Button>
                     </Td>
