@@ -9,10 +9,19 @@ if (!rootElement) {
   throw new Error('Root element not found');
 }
 
+// Get base path from the HTML base tag or detect from URL
+// For GitHub Pages, Vite will inject a <base> tag during build
+let basePath: string | undefined = undefined;
+const baseTag = document.querySelector('base');
+if (baseTag && baseTag.getAttribute('href')) {
+  const href = baseTag.getAttribute('href')!;
+  basePath = href !== '/' ? href : undefined;
+}
+
 try {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename={basePath === '/' ? undefined : basePath}>
         <GlobalStyle />
         <App />
       </BrowserRouter>
