@@ -16,5 +16,19 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split React and React DOM into separate chunk
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Split UI library into separate chunk
+          'ui-vendor': ['@ffa/latitude-typescript'],
+          // Split styled-components into separate chunk
+          'styled-vendor': ['styled-components'],
+        },
+      },
+    },
+  },
 });
 
