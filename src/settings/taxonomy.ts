@@ -46,7 +46,7 @@ export const SETTINGS_NAV: SettingsNavSection[] = [
       { label: 'Users', path: '/settings/admin/users', keywords: ['members', 'seats'] },
       { label: 'Notifications', path: '/settings/admin/notifications', keywords: ['system', 'incident'] },
       { label: 'ERP Integrations', path: '/settings/admin/erp-integrations', keywords: ['netsuite', 'sap', 'erp'] },
-      { label: 'Webhooks', path: '/settings/admin/webhooks', keywords: ['events', 'api'] },
+      { label: 'API', path: '/settings/admin/api', keywords: ['api', 'credentials', 'webhooks', 'keys', 'oauth'] },
       { label: 'Billing', path: '/settings/admin/billing', keywords: ['plan', 'invoice', 'payment'] },
     ],
   },

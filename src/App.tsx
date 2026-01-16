@@ -15,7 +15,7 @@ const AdminErpIntegrations = lazy(() => import('./settings/pages/admin/AdminErpI
 const AdminLegalEntities = lazy(() => import('./settings/pages/admin/AdminLegalEntities').then(module => ({ default: module.AdminLegalEntities })));
 const AdminNotifications = lazy(() => import('./settings/pages/admin/AdminNotifications').then(module => ({ default: module.AdminNotifications })));
 const AdminUsers = lazy(() => import('./settings/pages/admin/AdminUsers').then(module => ({ default: module.AdminUsers })));
-const AdminWebhooks = lazy(() => import('./settings/pages/admin/AdminWebhooks').then(module => ({ default: module.AdminWebhooks })));
+const AdminAPI = lazy(() => import('./settings/pages/admin/AdminAPI').then(module => ({ default: module.AdminAPI })));
 const NetworkOrganizations = lazy(() => import('./settings/pages/network/NetworkOrganizations').then(module => ({ default: module.NetworkOrganizations })));
 const NetworkContacts = lazy(() => import('./settings/pages/network/NetworkContacts').then(module => ({ default: module.NetworkContacts })));
 const NetworkFacilities = lazy(() => import('./settings/pages/network/NetworkFacilities').then(module => ({ default: module.NetworkFacilities })));
@@ -88,7 +88,7 @@ function App() {
           <Route path="admin/users" element={<AdminUsers />} />
           <Route path="admin/notifications" element={<AdminNotifications />} />
           <Route path="admin/erp-integrations" element={<AdminErpIntegrations />} />
-          <Route path="admin/webhooks" element={<AdminWebhooks />} />
+          <Route path="admin/api" element={<AdminAPI />} />
           <Route path="admin/billing" element={<AdminBilling />} />
 
           <Route path="*" element={<Navigate to="/settings/account/profile" replace />} />
