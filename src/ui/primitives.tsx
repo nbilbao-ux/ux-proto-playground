@@ -12,6 +12,8 @@ export const VStack = styled.div<{ $gap?: number }>`
   display: flex;
   flex-direction: column;
   gap: ${(p) => (p.$gap ?? 12)}px;
+  width: 100%;
+  height: fit-content;
 `;
 
 export const PageTitle = styled.h1`

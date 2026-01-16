@@ -395,6 +395,7 @@ export function NetworkOrganizations() {
     <SettingsPageLayout
       title="Organizations"
       subtitle="Manage your organization directory. Match and connect with partners in the Global Network."
+      wide
     >
       <VStack $gap={14}>
         <Card>

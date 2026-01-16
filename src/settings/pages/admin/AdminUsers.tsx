@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
-import { Button, Card, CardHeader, CardTitle, Divider, Input, Tag, VStack } from '@/ui/primitives';
+import { Button, Card, CardHeader, CardTitle, Checkbox, Divider, Input, Tag, VStack } from '@/ui/primitives';
+import { BulkActionBar } from '@/network/components/BulkActionBar';
 
 const Table = styled.table`
   width: 100%;
@@ -23,6 +24,14 @@ const Td = styled.td`
   vertical-align: middle;
 `;
 
+const FilterBar = styled.div`
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+
 type User = { id: string; name: string; email: string; role: 'Member' | 'Admin'; status: 'Active' | 'Invited' };
 
 export function AdminUsers() {
@@ -32,6 +41,42 @@ export function AdminUsers() {
     { id: 'u3', name: 'Sam Patel', email: 'sam@company.com', role: 'Member', status: 'Invited' },
   ]);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const searchable = [user.name, user.email, user.role].join(' ').toLowerCase();
+        if (!searchable.includes(query)) return false;
+      }
+      return true;
+    });
+  }, [users, searchQuery]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(filteredUsers.map(u => u.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const newSelected = new Set(selectedIds);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const handleDownloadCSV = () => {
+    // CSV download functionality not implemented for prototype
+    console.log('Download CSV for selected users:', Array.from(selectedIds));
+  };
 
   return (
     <SettingsPageLayout title="Users" subtitle="Manage members, roles, and invitations for your workspace.">
@@ -63,11 +108,37 @@ export function AdminUsers() {
               </Button>
             </div>
           </CardHeader>
-          <Divider />
+          <FilterBar>
+            <Input
+              placeholder="Search by name, email, or role..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ flex: 1, minWidth: 200 }}
+              aria-label="Search users"
+            />
+          </FilterBar>
+          <BulkActionBar
+            selectedCount={selectedIds.size}
+            onClearSelection={() => setSelectedIds(new Set())}
+            actions={[
+              {
+                label: 'Download CSV',
+                onClick: handleDownloadCSV,
+                variant: 'ghost',
+              },
+            ]}
+          />
           <div style={{ overflowX: 'auto' }}>
             <Table>
               <thead>
                 <tr>
+                  <Th style={{ width: 40 }}>
+                    <Checkbox
+                      checked={selectedIds.size > 0 && selectedIds.size === filteredUsers.length}
+                      onChange={handleSelectAll}
+                      aria-label="Select all users"
+                    />
+                  </Th>
                   <Th>Name</Th>
                   <Th>Email</Th>
                   <Th>Role</Th>
@@ -76,15 +147,25 @@ export function AdminUsers() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u) => (
+                {filteredUsers.map((u) => (
                   <tr key={u.id}>
+                    <Td>
+                      <Checkbox
+                        checked={selectedIds.has(u.id)}
+                        onChange={(checked) => handleSelectOne(u.id, checked)}
+                        aria-label={`Select ${u.name}`}
+                      />
+                    </Td>
                     <Td>{u.name}</Td>
                     <Td>{u.email}</Td>
                     <Td>{u.role}</Td>
                     <Td>{u.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag tone="warning">Invited</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button $variant="ghost" onClick={() => setUsers((prev) => prev.filter((x) => x.id !== u.id))}>
-                        Remove
+                      <Button $variant="primary" onClick={() => {
+                        // TODO: Open edit modal/panel
+                        console.log('Edit user:', u.id);
+                      }}>
+                        Edit
                       </Button>
                     </Td>
                   </tr>

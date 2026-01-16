@@ -240,6 +240,30 @@ function initializeSeedData() {
       updatedAt: now,
     },
   ];
+
+  // Seed ports data
+  ports = [
+    { id: 'port_001', unLocode: 'CNYTN', name: 'Yantian', city: 'Shenzhen', country: 'CN', latitude: 22.5431, longitude: 114.2579 },
+    { id: 'port_002', unLocode: 'CNNGB', name: 'Ningbo', city: 'Ningbo', country: 'CN', latitude: 29.8683, longitude: 121.5440 },
+    { id: 'port_003', unLocode: 'CNSHA', name: 'Shanghai', city: 'Shanghai', country: 'CN', latitude: 31.2304, longitude: 121.4737 },
+    { id: 'port_004', unLocode: 'CNQIN', name: 'Qingdao', city: 'Qingdao', country: 'CN', latitude: 36.0671, longitude: 120.3826 },
+    { id: 'port_005', unLocode: 'VNSGN', name: 'Ho Chi Minh City', city: 'Ho Chi Minh City', country: 'VN', latitude: 10.7769, longitude: 106.7009 },
+    { id: 'port_006', unLocode: 'USLAX', name: 'Los Angeles', city: 'Los Angeles', country: 'US', latitude: 33.7490, longitude: -118.2648 },
+    { id: 'port_007', unLocode: 'USLGB', name: 'Long Beach', city: 'Long Beach', country: 'US', latitude: 33.7701, longitude: -118.1937 },
+    { id: 'port_008', unLocode: 'USSEA', name: 'Seattle', city: 'Seattle', country: 'US', latitude: 47.6062, longitude: -122.3321 },
+    { id: 'port_009', unLocode: 'USTIW', name: 'Tacoma', city: 'Tacoma', country: 'US', latitude: 47.2529, longitude: -122.4443 },
+    { id: 'port_010', unLocode: 'USSAV', name: 'Savannah', city: 'Savannah', country: 'US', latitude: 32.0809, longitude: -81.0912 },
+    { id: 'port_011', unLocode: 'USNYC', name: 'New York', city: 'New York', country: 'US', latitude: 40.7128, longitude: -74.0060 },
+    { id: 'port_012', unLocode: 'USCHI', name: 'Chicago', city: 'Chicago', country: 'US', latitude: 41.8781, longitude: -87.6298 },
+    { id: 'port_013', unLocode: 'USMIA', name: 'Miami', city: 'Miami', country: 'US', latitude: 25.7617, longitude: -80.1918 },
+    { id: 'port_014', unLocode: 'USOAK', name: 'Oakland', city: 'Oakland', country: 'US', latitude: 37.8044, longitude: -122.2712 },
+    { id: 'port_015', unLocode: 'DEHAM', name: 'Hamburg', city: 'Hamburg', country: 'DE', latitude: 53.5511, longitude: 9.9937 },
+    { id: 'port_016', unLocode: 'NLRTM', name: 'Rotterdam', city: 'Rotterdam', country: 'NL', latitude: 51.9244, longitude: 4.4777 },
+    { id: 'port_017', unLocode: 'GBLON', name: 'London', city: 'London', country: 'GB', latitude: 51.5074, longitude: -0.1278 },
+    { id: 'port_018', unLocode: 'JPTYO', name: 'Tokyo', city: 'Tokyo', country: 'JP', latitude: 35.6762, longitude: 139.6503 },
+    { id: 'port_019', unLocode: 'KRPUS', name: 'Busan', city: 'Busan', country: 'KR', latitude: 35.1796, longitude: 129.0756 },
+    { id: 'port_020', unLocode: 'SGSIN', name: 'Singapore', city: 'Singapore', country: 'SG', latitude: 1.2897, longitude: 103.8501 },
+  ];
 }
 
 // Initialize on module load
@@ -426,5 +450,31 @@ export const tradeLaneService = {
   async delete(id: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 200));
     tradeLanes = tradeLanes.filter(t => t.id !== id);
+  },
+};
+
+// Port service
+export const portService = {
+  async search(query: string): Promise<Port[]> {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const queryLower = query.toLowerCase().trim();
+    if (!queryLower) return [...ports];
+    
+    return ports.filter(port => 
+      port.name.toLowerCase().includes(queryLower) ||
+      port.city.toLowerCase().includes(queryLower) ||
+      port.unLocode.toLowerCase().includes(queryLower) ||
+      port.country.toLowerCase().includes(queryLower)
+    );
+  },
+
+  async getById(id: string): Promise<Port | null> {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return ports.find(p => p.id === id) || null;
+  },
+
+  async getAll(): Promise<Port[]> {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return [...ports];
   },
 };

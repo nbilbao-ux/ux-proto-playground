@@ -29,6 +29,10 @@ const FileInput = styled.input`
   display: none;
 `;
 
+const ButtonContainer = styled.div`
+  width: 100%;
+`;
+
 export function AccountProfile() {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [firstName, setFirstName] = useState('');
@@ -80,28 +84,30 @@ export function AccountProfile() {
                 <AvatarPreview $imageUrl={profilePicture || undefined}>
                   {!profilePicture && getInitials()}
                 </AvatarPreview>
-                <VStack $gap={8}>
-                  <Button $variant="ghost" onClick={handleAvatarClick} type="button">
-                    {profilePicture ? 'Change' : 'Upload'}
-                  </Button>
-                  {profilePicture && (
-                    <Button 
-                      $variant="ghost" 
-                      onClick={() => setProfilePicture(null)} 
-                      type="button"
-                      style={{ fontSize: 12, padding: '4px 8px' }}
-                    >
-                      Remove
+                <ButtonContainer>
+                  <VStack $gap={8}>
+                    <Button $variant="ghost" onClick={handleAvatarClick} type="button" style={{ width: '100px' }}>
+                      {profilePicture ? 'Change' : 'Upload'}
                     </Button>
-                  )}
-                </VStack>
-                <FileInput
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  aria-label="Profile picture upload"
-                />
+                    {profilePicture && (
+                      <Button 
+                        $variant="ghost" 
+                        onClick={() => setProfilePicture(null)} 
+                        type="button"
+                        style={{ fontSize: 12, padding: '4px 8px' }}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </VStack>
+                  <FileInput
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    aria-label="Profile picture upload"
+                  />
+                </ButtonContainer>
               </AvatarContainer>
             </FieldControl>
           </FieldRow>

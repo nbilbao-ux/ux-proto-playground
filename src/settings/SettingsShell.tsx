@@ -12,7 +12,8 @@ const Shell = styled.div`
 
 const Sidebar = styled.aside`
   border-right: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
+                var(--bg);
   padding: 14px 12px;
   position: sticky;
   top: 0;
@@ -64,6 +65,12 @@ const NavItem = styled(NavLink)`
 
 const Content = styled.main`
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  background: var(--bg);
 `;
 
 function filterNavByQuery(nav: SettingsNavSection[], q: string): SettingsNavSection[] {

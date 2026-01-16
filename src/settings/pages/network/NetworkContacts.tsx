@@ -133,6 +133,7 @@ export function NetworkContacts() {
     <SettingsPageLayout
       title="Contacts"
       subtitle="Manage contacts and people in your network directory."
+      wide
     >
       <VStack $gap={14}>
         <Card>

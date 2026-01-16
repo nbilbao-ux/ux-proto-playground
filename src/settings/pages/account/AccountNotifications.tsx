@@ -552,11 +552,19 @@ export function AccountNotifications() {
 
         {/* Order Management Section */}
         <Card>
+          <CardHeader>
+            <CardTitle>Order Management</CardTitle>
+          </CardHeader>
           <CardBody style={{ padding: 0 }}>
             <NotificationTable>
               <NotificationTableHeader>
                 <NotificationTableHeaderCell>
-                  <FieldLabel style={{ marginBottom: 0 }}>Order Management</FieldLabel>
+                  <FieldLabel style={{ marginBottom: 8 }}>
+                    What kinds of events would you like to be notified about?
+                  </FieldLabel>
+                  <FieldHint style={{ marginBottom: 0 }}>
+                    Receive notifications for order management events and exceptions.
+                  </FieldHint>
                 </NotificationTableHeaderCell>
                 <NotificationTableHeaderCell>In App</NotificationTableHeaderCell>
                 <NotificationTableHeaderCell>Email</NotificationTableHeaderCell>

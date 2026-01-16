@@ -23,13 +23,45 @@ const Td = styled.td`
   vertical-align: middle;
 `;
 
-type Entity = { id: string; name: string; country: string; status: 'Active' | 'Inactive' };
+type Entity = { 
+  id: string; 
+  name: string; 
+  companyName: string;
+  address: string;
+  country: string; 
+  isPrimary: boolean;
+  status: 'Active' | 'Inactive' 
+};
 
 export function AdminLegalEntities() {
   const [rows, setRows] = useState<Entity[]>([
-    { id: 'e1', name: 'Flexport International LLC', country: 'US', status: 'Active' },
-    { id: 'e2', name: 'Flexport UK Ltd', country: 'GB', status: 'Active' },
-    { id: 'e3', name: 'Flexport EU BV', country: 'NL', status: 'Inactive' },
+    { 
+      id: 'e1', 
+      name: 'Flexport International LLC', 
+      companyName: 'Flexport International LLC',
+      address: '123 Main Street, San Francisco, CA 94105',
+      country: 'US', 
+      isPrimary: true,
+      status: 'Active' 
+    },
+    { 
+      id: 'e2', 
+      name: 'Flexport UK Ltd', 
+      companyName: 'Flexport UK Ltd',
+      address: '456 Fleet Street, London, EC4Y 1HT',
+      country: 'GB', 
+      isPrimary: false,
+      status: 'Active' 
+    },
+    { 
+      id: 'e3', 
+      name: 'Flexport EU BV', 
+      companyName: 'Flexport EU BV',
+      address: '789 Business Park, Amsterdam, 1012 AB',
+      country: 'NL', 
+      isPrimary: false,
+      status: 'Inactive' 
+    },
   ]);
   const [draft, setDraft] = useState('');
 
@@ -44,7 +76,15 @@ export function AdminLegalEntities() {
               onClick={() => {
                 const name = draft.trim();
                 if (!name) return;
-                setRows((prev) => [...prev, { id: `e${prev.length + 1}`, name, country: '—', status: 'Active' }]);
+                setRows((prev) => [...prev, { 
+                  id: `e${prev.length + 1}`, 
+                  name, 
+                  companyName: name,
+                  address: '',
+                  country: '—', 
+                  isPrimary: false,
+                  status: 'Active' 
+                }]);
                 setDraft('');
               }}
             >
@@ -59,8 +99,10 @@ export function AdminLegalEntities() {
             <Table>
               <thead>
                 <tr>
-                  <Th>Name</Th>
+                  <Th>Company Name</Th>
+                  <Th>Address</Th>
                   <Th>Country</Th>
+                  <Th style={{ width: 120 }}>Primary</Th>
                   <Th style={{ width: 140 }}>Status</Th>
                   <Th style={{ width: 120 }} />
                 </tr>
@@ -68,12 +110,17 @@ export function AdminLegalEntities() {
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.id}>
-                    <Td>{r.name}</Td>
+                    <Td>{r.companyName}</Td>
+                    <Td>{r.address}</Td>
                     <Td>{r.country}</Td>
+                    <Td>{r.isPrimary ? <Tag tone="accent">Primary</Tag> : '—'}</Td>
                     <Td>{r.status === 'Active' ? <Tag tone="success">Active</Tag> : <Tag>Inactive</Tag>}</Td>
                     <Td style={{ textAlign: 'right' }}>
-                      <Button $variant="ghost" onClick={() => setRows((prev) => prev.filter((x) => x.id !== r.id))}>
-                        Remove
+                      <Button $variant="ghost" onClick={() => {
+                        // TODO: Implement edit functionality
+                        console.log('Edit entity:', r.id);
+                      }}>
+                        Edit
                       </Button>
                     </Td>
                   </tr>

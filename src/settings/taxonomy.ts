@@ -35,7 +35,6 @@ export const SETTINGS_NAV: SettingsNavSection[] = [
       { label: 'Contacts', path: '/settings/network/contacts', keywords: ['person', 'contact', 'people'] },
       { label: 'Facilities & Locations', path: '/settings/network/facilities', keywords: ['facility', 'warehouse', 'location', 'address'] },
       { label: 'Trade Lanes', path: '/settings/network/trade-lanes', keywords: ['lane', 'port', 'route'] },
-      { label: 'Invitations', path: '/settings/network/invitations', keywords: ['invite', 'invitation', 'connect'] },
     ],
   },
   {
@@ -47,7 +46,9 @@ export const SETTINGS_NAV: SettingsNavSection[] = [
       { label: 'Notifications', path: '/settings/admin/notifications', keywords: ['system', 'incident'] },
       { label: 'ERP Integrations', path: '/settings/admin/erp-integrations', keywords: ['netsuite', 'sap', 'erp'] },
       { label: 'API', path: '/settings/admin/api', keywords: ['api', 'credentials', 'webhooks', 'keys', 'oauth'] },
+      { label: 'AI', path: '/settings/admin/ai', keywords: ['ai', 'automation', 'agent', 'linear', 'intelligence'] },
       { label: 'Billing', path: '/settings/admin/billing', keywords: ['plan', 'invoice', 'payment'] },
+      { label: 'Security', path: '/settings/admin/security', keywords: ['security', 'authentication', 'sso', 'saml', 'compliance', 'hipaa', 'access'] },
     ],
   },
 ];

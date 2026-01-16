@@ -16,6 +16,8 @@ const AdminLegalEntities = lazy(() => import('./settings/pages/admin/AdminLegalE
 const AdminNotifications = lazy(() => import('./settings/pages/admin/AdminNotifications').then(module => ({ default: module.AdminNotifications })));
 const AdminUsers = lazy(() => import('./settings/pages/admin/AdminUsers').then(module => ({ default: module.AdminUsers })));
 const AdminAPI = lazy(() => import('./settings/pages/admin/AdminAPI').then(module => ({ default: module.AdminAPI })));
+const AdminSecurity = lazy(() => import('./settings/pages/admin/AdminSecurity').then(module => ({ default: module.AdminSecurity })));
+const AdminAI = lazy(() => import('./settings/pages/admin/AdminAI').then(module => ({ default: module.AdminAI })));
 const NetworkOrganizations = lazy(() => import('./settings/pages/network/NetworkOrganizations').then(module => ({ default: module.NetworkOrganizations })));
 const NetworkContacts = lazy(() => import('./settings/pages/network/NetworkContacts').then(module => ({ default: module.NetworkContacts })));
 const NetworkFacilities = lazy(() => import('./settings/pages/network/NetworkFacilities').then(module => ({ default: module.NetworkFacilities })));
@@ -77,7 +79,8 @@ function App() {
           <Route path="network/organizations" element={<NetworkOrganizations />} />
           <Route path="network/contacts" element={<NetworkContacts />} />
           <Route path="network/facilities" element={<NetworkFacilities />} />
-          <Route path="network/ports-lanes" element={<NetworkPortsLanes />} />
+          <Route path="network/trade-lanes" element={<NetworkPortsLanes />} />
+          <Route path="network/ports-lanes" element={<Navigate to="/settings/network/trade-lanes" replace />} />
           <Route path="network/locations" element={<NetworkLocations />} />
           <Route path="network/suppliers" element={<NetworkSuppliers />} />
           <Route path="network/carriers" element={<NetworkCarriers />} />
@@ -89,7 +92,9 @@ function App() {
           <Route path="admin/notifications" element={<AdminNotifications />} />
           <Route path="admin/erp-integrations" element={<AdminErpIntegrations />} />
           <Route path="admin/api" element={<AdminAPI />} />
+          <Route path="admin/ai" element={<AdminAI />} />
           <Route path="admin/billing" element={<AdminBilling />} />
+          <Route path="admin/security" element={<AdminSecurity />} />
 
           <Route path="*" element={<Navigate to="/settings/account/profile" replace />} />
         </Route>

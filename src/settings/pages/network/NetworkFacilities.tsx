@@ -145,6 +145,7 @@ export function NetworkFacilities() {
     <SettingsPageLayout
       title="Facilities & Locations"
       subtitle="Manage operational locations: warehouses, distribution centers, offices, and ports."
+      wide
     >
       <VStack $gap={14}>
         <Card>
