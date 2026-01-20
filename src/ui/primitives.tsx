@@ -231,6 +231,12 @@ export const FieldLabel = styled.div`
   color: rgba(255,255,255,0.88);
 `;
 
+export const Label = styled.label`
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+`;
+
 export const FieldHint = styled.div`
   margin-top: 4px;
   font-size: 12px;

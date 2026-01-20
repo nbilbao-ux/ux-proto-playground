@@ -5,6 +5,7 @@ import { SettingsShell } from './settings/SettingsShell';
 
 // Lazy load all page components for code splitting
 const Home = lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
+const SupplierOnboarding = lazy(() => import('./pages/SupplierOnboarding').then(module => ({ default: module.SupplierOnboarding })));
 const AccountNotifications = lazy(() => import('./settings/pages/account/AccountNotifications').then(module => ({ default: module.AccountNotifications })));
 const AccountPermission = lazy(() => import('./settings/pages/account/AccountPermission').then(module => ({ default: module.AccountPermission })));
 const AccountProfile = lazy(() => import('./settings/pages/account/AccountProfile').then(module => ({ default: module.AccountProfile })));
@@ -74,6 +75,8 @@ function App() {
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/supplier-onboarding" element={<SupplierOnboarding />} />
+        <Route path="/invite/:token" element={<SupplierOnboarding />} />
 
         <Route path="/settings" element={<SettingsShell />}>
           <Route index element={<Navigate to="/settings/account/profile" replace />} />
