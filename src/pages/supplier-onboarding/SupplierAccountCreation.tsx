@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -8,12 +7,15 @@ import {
   CardHeader,
   VStack,
   HStack,
-  Label,
   Input,
   Select,
   Muted,
   Tag,
-  Checkbox,
+  FieldRow,
+  FieldLabel,
+  FieldHint,
+  FieldControl,
+  Divider,
 } from '@/ui/primitives';
 import {
   type InviteData,
@@ -21,14 +23,22 @@ import {
   type AccountFormData,
   type FormErrors,
   countries,
+  countryCodes,
   languages,
-  entityRoles,
+  relationshipTypes,
+  timezones,
+  getDefaultTimezone,
+  getDefaultLanguage,
+  getDefaultCountryCode,
   validateEmail,
   validatePhone,
   validatePassword,
   getPasswordStrength,
   checkForDuplicate,
+  parseAddress,
 } from './types';
+import { useDemoData } from './DemoDataContext';
+import { getTranslations } from './translations';
 
 // ============================================================================
 // Styled Components
@@ -37,26 +47,13 @@ import {
 const FormSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
 `;
 
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
+const FormCardBody = styled(CardBody)`
+  padding: 0;
 `;
 
-const FormField = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const RequiredLabel = styled(Label)`
+const RequiredFieldLabel = styled(FieldLabel)`
   &::after {
     content: ' *';
     color: rgba(255,92,122,0.9);
@@ -79,6 +76,33 @@ const InputWithError = styled(Input)<{ $hasError?: boolean }>`
 `;
 
 const SelectWithError = styled(Select)<{ $hasError?: boolean }>`
+  border-color: ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.5)' : 'var(--border)'};
+  
+  &:focus {
+    border-color: ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.7)' : 'rgba(106,167,255,0.45)'};
+    box-shadow: 0 0 0 4px ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.14)' : 'rgba(106,167,255,0.14)'};
+  }
+`;
+
+const PhoneInputGroup = styled.div`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+`;
+
+const CountryCodeSelect = styled(Select)<{ $hasError?: boolean }>`
+  width: 80px;
+  flex-shrink: 0;
+  border-color: ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.5)' : 'var(--border)'};
+  
+  &:focus {
+    border-color: ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.7)' : 'rgba(106,167,255,0.45)'};
+    box-shadow: 0 0 0 4px ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.14)' : 'rgba(106,167,255,0.14)'};
+  }
+`;
+
+const PhoneInput = styled(Input)<{ $hasError?: boolean }>`
+  flex: 1;
   border-color: ${({ $hasError }) => $hasError ? 'rgba(255,92,122,0.5)' : 'var(--border)'};
   
   &:focus {
@@ -212,28 +236,21 @@ const ConnectionRole = styled.div`
   margin-top: 2px;
 `;
 
-const SimulateCheckbox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: rgba(255,210,122,0.08);
-  border: 1px solid rgba(255,210,122,0.2);
-  border-radius: 8px;
-  margin-top: 16px;
-  font-size: 12px;
-  color: rgba(255,240,210,0.9);
+const RedirectNotice = styled.div`
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  margin-top: 8px;
+  font-style: italic;
 `;
 
 const ContextBanner = styled.div`
   background: rgba(106,167,255,0.08);
-  border: 1px solid rgba(106,167,255,0.2);
-  border-radius: 8px;
   padding: 12px 16px;
-  margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 12px;
+  border-bottom: 1px solid var(--border);
 `;
 
 const ContextIcon = styled.span`
@@ -248,32 +265,20 @@ const ContextText = styled.div`
 
 const SectionDivider = styled.div`
   border-top: 1px solid var(--border);
-  margin: 8px 0;
-  padding-top: 20px;
+  padding: 16px 16px 0;
 `;
 
 const SectionTitle = styled.div`
   font-size: 14px;
   font-weight: 600;
   color: rgba(255,255,255,0.7);
-  margin-bottom: 16px;
 `;
 
-const PrototypeFooter = styled.div`
-  text-align: center;
-  margin-top: 24px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.5);
-`;
-
-const FooterLink = styled(Link)`
-  color: rgba(106,167,255,0.9);
-  text-decoration: none;
-  display: inline-block;
-
-  &:hover {
-    text-decoration: underline;
-  }
+const FormActions = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px;
 `;
 
 // ============================================================================
@@ -287,6 +292,8 @@ interface SupplierAccountCreationProps {
   initialStep?: OnboardingStep;
   onBack: () => void;
   onComplete: () => void;
+  onStepChange?: (step: OnboardingStep) => void;
+  language?: string;
 }
 
 export function SupplierAccountCreation({
@@ -294,66 +301,85 @@ export function SupplierAccountCreation({
   initialStep = 'profile',
   onBack,
   onComplete,
+  onStepChange,
+  language = 'en',
 }: SupplierAccountCreationProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(initialStep);
-  const [simulateDuplicate, setSimulateDuplicate] = useState(false);
+  const t = getTranslations(language);
+  const { getProfileFormData, getCompanyFormData, setProfileFormData, setCompanyFormData } = useDemoData();
   
-  // Form state - Profile includes personal info + role
-  const [profileForm, setProfileForm] = useState<AccountFormData & { entityRole: string }>({
-    firstName: inviteData.supplierContactFirstName || '',
-    lastName: inviteData.supplierContactLastName || '',
-    email: inviteData.supplierContactEmail,
-    phone: '',
-    preferredLanguage: inviteData.preferredLanguage,
-    password: '',
-    confirmPassword: '',
-    entityRole: '',
-  });
+  // Sync internal step with parent's initialStep when it changes (for footer nav control)
+  useEffect(() => {
+    setCurrentStep(initialStep);
+  }, [initialStep]);
   
-  // Company form - just company details
-  const [companyForm, setCompanyForm] = useState<CompanyFormData>({
-    country: inviteData.suggestedCountry,
-    companyNameLocal: '',
-    companyNameEnglish: inviteData.supplierCompanyName,
-    businessRegistrationNumber: '',
-    addressLocal: '',
-    addressEnglish: '',
-    entityRole: '', // Will be copied from profile
-  });
+  // Wrapper to update step and notify parent
+  const updateStep = (step: OnboardingStep) => {
+    setCurrentStep(step);
+    onStepChange?.(step);
+  };
+  
+  // Form state - initialized from demo data context
+  const [profileForm, setProfileFormLocal] = useState<AccountFormData>(() => 
+    getProfileFormData(inviteData)
+  );
+  
+  // Company form - initialized from demo data context
+  const [companyForm, setCompanyFormLocal] = useState<CompanyFormData>(() => 
+    getCompanyFormData(inviteData)
+  );
   
   const [profileErrors, setProfileErrors] = useState<FormErrors>({});
   const [companyErrors, setCompanyErrors] = useState<FormErrors>({});
+  
+  // Sync form changes back to context
+  const handleProfileFormChange = (newData: AccountFormData) => {
+    setProfileFormLocal(newData);
+    setProfileFormData(newData);
+  };
+  
+  const handleCompanyFormChange = (newData: CompanyFormData) => {
+    setCompanyFormLocal(newData);
+    setCompanyFormData(newData);
+  };
 
   // Validate profile form
   const validateProfileForm = (): boolean => {
     const errors: FormErrors = {};
     
-    if (!profileForm.firstName.trim()) errors.firstName = 'First name is required';
-    if (!profileForm.lastName.trim()) errors.lastName = 'Last name is required';
+    if (!profileForm.firstName.trim()) errors.firstName = t.firstNameRequired;
+    if (!profileForm.lastName.trim()) errors.lastName = t.lastNameRequired;
     if (!profileForm.email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = t.emailRequired;
     } else if (!validateEmail(profileForm.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = t.invalidEmail;
     }
     if (!profileForm.phone.trim()) {
-      errors.phone = 'Phone number is required';
+      errors.phone = t.phoneRequired;
     } else if (!validatePhone(profileForm.phone)) {
-      errors.phone = 'Please enter a valid phone number';
+      errors.phone = t.invalidPhone;
     }
-    if (!profileForm.preferredLanguage) errors.preferredLanguage = 'Preferred language is required';
-    if (!profileForm.entityRole) errors.entityRole = 'Your role is required';
+    if (!profileForm.preferredLanguage) errors.preferredLanguage = t.preferredLanguageRequired;
+    if (!profileForm.jobTitle.trim()) errors.jobTitle = t.jobTitleRequired;
     
     const passwordValidation = validatePassword(profileForm.password);
     if (!profileForm.password) {
-      errors.password = 'Password is required';
+      errors.password = t.passwordRequired;
     } else if (!passwordValidation.valid) {
-      errors.password = passwordValidation.errors.join(', ');
+      // Map English error messages to translated ones
+      const translatedErrors = passwordValidation.errors.map(err => {
+        if (err.includes('8 characters')) return t.passwordMinChars;
+        if (err.includes('uppercase')) return t.passwordUppercase;
+        if (err.includes('symbol')) return t.passwordSymbol;
+        return err;
+      });
+      errors.password = translatedErrors.join(', ');
     }
     
     if (!profileForm.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password';
+      errors.confirmPassword = t.confirmPasswordRequired;
     } else if (profileForm.password !== profileForm.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = t.passwordsDoNotMatch;
     }
     
     setProfileErrors(errors);
@@ -364,12 +390,15 @@ export function SupplierAccountCreation({
   const validateCompanyForm = (): boolean => {
     const errors: FormErrors = {};
     
-    if (!companyForm.country) errors.country = 'Country is required';
-    if (!companyForm.companyNameLocal.trim()) errors.companyNameLocal = 'Company name (local) is required';
-    if (!companyForm.companyNameEnglish.trim()) errors.companyNameEnglish = 'Company name (English) is required';
-    if (!companyForm.businessRegistrationNumber.trim()) errors.businessRegistrationNumber = 'Business registration number is required';
-    if (!companyForm.addressLocal.trim()) errors.addressLocal = 'Address (local) is required';
-    if (!companyForm.addressEnglish.trim()) errors.addressEnglish = 'Address (English) is required';
+    if (!companyForm.companyNameEnglish.trim()) errors.companyNameEnglish = t.companyNameRequired;
+    if (!companyForm.streetAddress1.trim()) errors.streetAddress1 = t.streetAddress1Required;
+    if (!companyForm.city.trim()) errors.city = t.cityRequired;
+    if (!companyForm.country) errors.country = t.countryRequired;
+    if (!companyForm.defaultLanguage) errors.defaultLanguage = t.defaultLanguageRequired;
+    if (!companyForm.defaultTimezone) errors.defaultTimezone = t.timezoneRequired;
+    if (!companyForm.companyPhone.trim()) errors.companyPhone = t.companyPhoneRequired;
+    if (!companyForm.businessRegistrationNumber.trim()) errors.businessRegistrationNumber = t.businessRegRequired;
+    if (!companyForm.relationshipType) errors.relationshipType = t.relationshipRequired;
     
     setCompanyErrors(errors);
     return Object.keys(errors).length === 0;
@@ -379,46 +408,43 @@ export function SupplierAccountCreation({
     if (validateProfileForm()) {
       // Check for duplicates before proceeding
       const duplicateCheck = checkForDuplicate(profileForm.email);
-      if (duplicateCheck.isDuplicate || simulateDuplicate) {
-        setCurrentStep('duplicate');
+      if (duplicateCheck.isDuplicate) {
+        updateStep('duplicate');
       } else {
-        // Copy entity role to company form
-        setCompanyForm(prev => ({ ...prev, entityRole: profileForm.entityRole }));
-        setCurrentStep('company');
+        updateStep('company');
       }
     }
   };
 
   const handleCompanyNext = () => {
     if (validateCompanyForm()) {
-      setCurrentStep('success');
+      updateStep('success');
       onComplete();
     }
   };
 
   const handleBackFromCompany = () => {
-    setCurrentStep('profile');
+    updateStep('profile');
   };
 
   const handleBackFromDuplicate = () => {
-    setCurrentStep('profile');
+    updateStep('profile');
   };
 
   const handleLogin = () => {
     // Simulate login and auto-link
-    setCurrentStep('success');
+    updateStep('success');
     onComplete();
   };
 
   const passwordStrength = getPasswordStrength(profileForm.password);
-  const selectedRole = entityRoles.find(r => r.value === profileForm.entityRole);
 
-  // Reusable footer for prototype navigation
-  const prototypeFooter = (
-    <PrototypeFooter>
-      <FooterLink to="/">← Back to prototype index</FooterLink>
-    </PrototypeFooter>
-  );
+  // Helper to get translated password strength
+  const getTranslatedStrength = (strength: 'weak' | 'medium' | 'strong') => {
+    if (strength === 'weak') return t.weak;
+    if (strength === 'medium') return t.medium;
+    return t.strong;
+  };
 
   // Step 1: Your Profile (Personal info + Role)
   if (currentStep === 'profile') {
@@ -427,279 +453,566 @@ export function SupplierAccountCreation({
       <Card>
         <CardHeader>
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Create Your Account</h2>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{t.createYourAccount}</h2>
             <Muted style={{ fontSize: '13px', marginTop: '4px' }}>
-              Set up your personal profile to get started
+              {t.setupPersonalProfile}
             </Muted>
           </div>
         </CardHeader>
-        <CardBody>
-          <ContextBanner>
-            <ContextIcon>🤝</ContextIcon>
-            <ContextText>
-              You're joining Flexport to connect with <strong>{inviteData.clientCompanyName}</strong>
-            </ContextText>
-          </ContextBanner>
-
+        <ContextBanner>
+          <ContextIcon>🤝</ContextIcon>
+          <ContextText>
+            {t.joiningToConnect} <strong>{inviteData.clientCompanyName}</strong> {t.asSupplier}
+          </ContextText>
+        </ContextBanner>
+        <FormCardBody>
           <FormSection>
-            <FormRow>
-              <FormField>
-                <RequiredLabel>First Name</RequiredLabel>
-                <InputWithError
-                  placeholder="Enter first name"
-                  value={profileForm.firstName}
-                  onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                  $hasError={!!profileErrors.firstName}
-                />
-                {profileErrors.firstName && <ErrorText>{profileErrors.firstName}</ErrorText>}
-              </FormField>
-              <FormField>
-                <RequiredLabel>Last Name</RequiredLabel>
-                <InputWithError
-                  placeholder="Enter last name"
-                  value={profileForm.lastName}
-                  onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                  $hasError={!!profileErrors.lastName}
-                />
-                {profileErrors.lastName && <ErrorText>{profileErrors.lastName}</ErrorText>}
-              </FormField>
-            </FormRow>
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.firstName}</RequiredFieldLabel>
+                <FieldHint>{t.enterFirstName}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterFirstName}
+                    value={profileForm.firstName}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, firstName: e.target.value })}
+                    $hasError={!!profileErrors.firstName}
+                  />
+                  {profileErrors.firstName && <ErrorText>{profileErrors.firstName}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormRow>
-              <FormField>
-                <RequiredLabel>Email</RequiredLabel>
-                <InputWithError
-                  type="email"
-                  placeholder="email@company.com"
-                  value={profileForm.email}
-                  onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                  $hasError={!!profileErrors.email}
-                />
-                {profileErrors.email && <ErrorText>{profileErrors.email}</ErrorText>}
-              </FormField>
-              <FormField>
-                <RequiredLabel>Phone Number</RequiredLabel>
-                <InputWithError
-                  type="tel"
-                  placeholder="+86 123 4567 8900"
-                  value={profileForm.phone}
-                  onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                  $hasError={!!profileErrors.phone}
-                />
-                {profileErrors.phone && <ErrorText>{profileErrors.phone}</ErrorText>}
-              </FormField>
-            </FormRow>
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.lastName}</RequiredFieldLabel>
+                <FieldHint>{t.enterLastName}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterLastName}
+                    value={profileForm.lastName}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, lastName: e.target.value })}
+                    $hasError={!!profileErrors.lastName}
+                  />
+                  {profileErrors.lastName && <ErrorText>{profileErrors.lastName}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormField>
-              <RequiredLabel>Preferred Language</RequiredLabel>
-              <SelectWithError
-                value={profileForm.preferredLanguage}
-                onChange={(e) => setProfileForm({ ...profileForm, preferredLanguage: e.target.value })}
-                $hasError={!!profileErrors.preferredLanguage}
-              >
-                {languages.map(lang => (
-                  <option key={lang.value} value={lang.value}>{lang.label}</option>
-                ))}
-              </SelectWithError>
-              {profileErrors.preferredLanguage && <ErrorText>{profileErrors.preferredLanguage}</ErrorText>}
-            </FormField>
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.email}</RequiredFieldLabel>
+                <FieldHint>{t.emailPlaceholder}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    type="email"
+                    placeholder={t.emailPlaceholder}
+                    value={profileForm.email}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, email: e.target.value })}
+                    $hasError={!!profileErrors.email}
+                  />
+                  {profileErrors.email && <ErrorText>{profileErrors.email}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.phoneNumber}</RequiredFieldLabel>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <PhoneInputGroup>
+                    <CountryCodeSelect
+                      value={profileForm.phoneCountryCode}
+                      onChange={(e) => handleProfileFormChange({ ...profileForm, phoneCountryCode: e.target.value })}
+                      $hasError={!!profileErrors.phone}
+                    >
+                      {countryCodes.map(code => (
+                        <option key={code.value} value={code.value}>{code.label}</option>
+                      ))}
+                    </CountryCodeSelect>
+                    <PhoneInput
+                      type="tel"
+                      placeholder="123 4567 8900"
+                      value={profileForm.phone}
+                      onChange={(e) => handleProfileFormChange({ ...profileForm, phone: e.target.value })}
+                      $hasError={!!profileErrors.phone}
+                    />
+                  </PhoneInputGroup>
+                  {profileErrors.phone && <ErrorText>{profileErrors.phone}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.preferredLanguage}</RequiredFieldLabel>
+                <FieldHint>Select your preferred language for communications</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <SelectWithError
+                    value={profileForm.preferredLanguage}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, preferredLanguage: e.target.value })}
+                    $hasError={!!profileErrors.preferredLanguage}
+                  >
+                    {languages.map(lang => (
+                      <option key={lang.value} value={lang.value}>{lang.label}</option>
+                    ))}
+                  </SelectWithError>
+                  {profileErrors.preferredLanguage && <ErrorText>{profileErrors.preferredLanguage}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.jobTitle}</RequiredFieldLabel>
+                <FieldHint>{t.enterJobTitle}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterJobTitle}
+                    value={profileForm.jobTitle}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, jobTitle: e.target.value })}
+                    $hasError={!!profileErrors.jobTitle}
+                  />
+                  {profileErrors.jobTitle && <ErrorText>{profileErrors.jobTitle}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
 
             <SectionDivider>
-              <SectionTitle>Your Role</SectionTitle>
+              <SectionTitle>{t.security}</SectionTitle>
             </SectionDivider>
 
-            <FormField>
-              <RequiredLabel>What is your role in shipments?</RequiredLabel>
-              <SelectWithError
-                value={profileForm.entityRole}
-                onChange={(e) => setProfileForm({ ...profileForm, entityRole: e.target.value })}
-                $hasError={!!profileErrors.entityRole}
-              >
-                <option value="">Select your role</option>
-                {entityRoles.map(role => (
-                  <option key={role.value} value={role.value}>{role.label}</option>
-                ))}
-              </SelectWithError>
-              {profileErrors.entityRole && <ErrorText>{profileErrors.entityRole}</ErrorText>}
-              <Muted style={{ fontSize: '12px', marginTop: '4px' }}>
-                This determines how you appear on shipping documents (HBL/Billing)
-              </Muted>
-            </FormField>
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.password}</RequiredFieldLabel>
+                <FieldHint>{t.passwordHint}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    type="password"
+                    placeholder={t.createPassword}
+                    value={profileForm.password}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, password: e.target.value })}
+                    $hasError={!!profileErrors.password}
+                  />
+                  {profileForm.password && (
+                    <>
+                      <PasswordStrength>
+                        <PasswordBar $active={passwordStrength.score >= 1} $strength={passwordStrength.strength} />
+                        <PasswordBar $active={passwordStrength.score >= 3} $strength={passwordStrength.strength} />
+                        <PasswordBar $active={passwordStrength.score >= 5} $strength={passwordStrength.strength} />
+                      </PasswordStrength>
+                      <PasswordHint $strength={passwordStrength.strength}>
+                        {t.passwordStrength}: {getTranslatedStrength(passwordStrength.strength)}
+                      </PasswordHint>
+                    </>
+                  )}
+                  {profileErrors.password && <ErrorText>{profileErrors.password}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <SectionDivider>
-              <SectionTitle>Security</SectionTitle>
-            </SectionDivider>
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.confirmPassword}</RequiredFieldLabel>
+                <FieldHint>{t.confirmYourPassword}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    type="password"
+                    placeholder={t.confirmYourPassword}
+                    value={profileForm.confirmPassword}
+                    onChange={(e) => handleProfileFormChange({ ...profileForm, confirmPassword: e.target.value })}
+                    $hasError={!!profileErrors.confirmPassword}
+                  />
+                  {profileErrors.confirmPassword && <ErrorText>{profileErrors.confirmPassword}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
 
-            <FormField>
-              <RequiredLabel>Password</RequiredLabel>
-              <InputWithError
-                type="password"
-                placeholder="Create a password"
-                value={profileForm.password}
-                onChange={(e) => setProfileForm({ ...profileForm, password: e.target.value })}
-                $hasError={!!profileErrors.password}
-              />
-              {profileForm.password && (
-                <>
-                  <PasswordStrength>
-                    <PasswordBar $active={passwordStrength.score >= 1} $strength={passwordStrength.strength} />
-                    <PasswordBar $active={passwordStrength.score >= 3} $strength={passwordStrength.strength} />
-                    <PasswordBar $active={passwordStrength.score >= 5} $strength={passwordStrength.strength} />
-                  </PasswordStrength>
-                  <PasswordHint $strength={passwordStrength.strength}>
-                    Password strength: {passwordStrength.strength}
-                  </PasswordHint>
-                </>
-              )}
-              {profileErrors.password && <ErrorText>{profileErrors.password}</ErrorText>}
-              <Muted style={{ fontSize: '12px', marginTop: '4px' }}>
-                Min 8 characters, 1 uppercase letter, 1 symbol
-              </Muted>
-            </FormField>
-
-            <FormField>
-              <RequiredLabel>Confirm Password</RequiredLabel>
-              <InputWithError
-                type="password"
-                placeholder="Confirm your password"
-                value={profileForm.confirmPassword}
-                onChange={(e) => setProfileForm({ ...profileForm, confirmPassword: e.target.value })}
-                $hasError={!!profileErrors.confirmPassword}
-              />
-              {profileErrors.confirmPassword && <ErrorText>{profileErrors.confirmPassword}</ErrorText>}
-            </FormField>
-
-            <SimulateCheckbox>
-              <Checkbox
-                checked={simulateDuplicate}
-                onChange={setSimulateDuplicate}
-                aria-label="Simulate duplicate account"
-              />
-              <span>Demo: Simulate duplicate account detection</span>
-            </SimulateCheckbox>
-
-            <HStack $gap={12} style={{ marginTop: '8px', justifyContent: 'flex-end' }}>
+            <FormActions>
               <Button $variant="secondary" onClick={onBack}>
-                Back
+                {t.back}
               </Button>
               <Button $variant="primary" onClick={handleProfileNext}>
-                Continue
+                {t.continue}
               </Button>
-            </HStack>
+            </FormActions>
           </FormSection>
-        </CardBody>
+        </FormCardBody>
       </Card>
-      {prototypeFooter}
       </>
     );
   }
 
   // Step 2: Company Information
   if (currentStep === 'company') {
+    // Update defaults when country changes (also update phone country code)
+    const handleCountryChange = (newCountry: string) => {
+      handleCompanyFormChange({
+        ...companyForm,
+        country: newCountry,
+        defaultLanguage: getDefaultLanguage(newCountry),
+        defaultTimezone: getDefaultTimezone(newCountry),
+        companyPhoneCountryCode: getDefaultCountryCode(newCountry),
+      });
+    };
+
+    // Handle street address 1 change with address parsing
+    const handleStreetAddress1Change = (value: string) => {
+      // Check if this looks like a full address (contains commas)
+      if (value.includes(',') && value.length > 20) {
+        const parsed = parseAddress(value);
+        handleCompanyFormChange({
+          ...companyForm,
+          streetAddress1: parsed.streetAddress1 || value,
+          streetAddress2: parsed.streetAddress2 || companyForm.streetAddress2,
+          city: parsed.city || companyForm.city,
+          stateProvince: parsed.stateProvince || companyForm.stateProvince,
+          postalCode: parsed.postalCode || companyForm.postalCode,
+          country: parsed.country || companyForm.country,
+          // Also update language/timezone/phone code if country was parsed
+          ...(parsed.country ? {
+            defaultLanguage: companyForm.defaultLanguage || getDefaultLanguage(parsed.country),
+            defaultTimezone: companyForm.defaultTimezone || getDefaultTimezone(parsed.country),
+            companyPhoneCountryCode: companyForm.companyPhoneCountryCode || getDefaultCountryCode(parsed.country),
+          } : {}),
+        });
+      } else {
+        handleCompanyFormChange({ ...companyForm, streetAddress1: value });
+      }
+    };
+
     return (
       <>
       <Card>
         <CardHeader>
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Company Information</h2>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{t.companyInformation}</h2>
             <Muted style={{ fontSize: '13px', marginTop: '4px' }}>
-              Enter your company's registration details
+              {t.enterCompanyDetails}
             </Muted>
           </div>
         </CardHeader>
-        <CardBody>
-          <ContextBanner>
-            <ContextIcon>🏢</ContextIcon>
-            <ContextText>
-              Setting up company profile for <strong>{profileForm.firstName} {profileForm.lastName}</strong> 
-              {selectedRole && <> as <strong>{selectedRole.label}</strong></>}
-            </ContextText>
-          </ContextBanner>
-
+        <ContextBanner>
+          <ContextIcon>🏢</ContextIcon>
+          <ContextText>
+            {t.joiningToConnect} <strong>{inviteData.clientCompanyName}</strong> {t.asSupplier}
+          </ContextText>
+        </ContextBanner>
+        <FormCardBody>
           <FormSection>
-            <FormField>
-              <RequiredLabel>Country / Region</RequiredLabel>
-              <SelectWithError
-                value={companyForm.country}
-                onChange={(e) => setCompanyForm({ ...companyForm, country: e.target.value })}
-                $hasError={!!companyErrors.country}
-              >
-                <option value="">Select country</option>
-                {countries.map(c => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </SelectWithError>
-              {companyErrors.country && <ErrorText>{companyErrors.country}</ErrorText>}
-            </FormField>
+            {/* Company Name */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.companyName}</RequiredFieldLabel>
+                <FieldHint>{t.enterCompanyName}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterCompanyName}
+                    value={companyForm.companyNameEnglish}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, companyNameEnglish: e.target.value })}
+                    $hasError={!!companyErrors.companyNameEnglish}
+                  />
+                  {companyErrors.companyNameEnglish && <ErrorText>{companyErrors.companyNameEnglish}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormRow>
-              <FormField>
-                <RequiredLabel>Company Name (Local Language)</RequiredLabel>
-                <InputWithError
-                  placeholder="Enter company name in local language"
-                  value={companyForm.companyNameLocal}
-                  onChange={(e) => setCompanyForm({ ...companyForm, companyNameLocal: e.target.value })}
-                  $hasError={!!companyErrors.companyNameLocal}
-                />
-                {companyErrors.companyNameLocal && <ErrorText>{companyErrors.companyNameLocal}</ErrorText>}
-              </FormField>
-              <FormField>
-                <RequiredLabel>Company Name (English)</RequiredLabel>
-                <InputWithError
-                  placeholder="Enter company name in English"
-                  value={companyForm.companyNameEnglish}
-                  onChange={(e) => setCompanyForm({ ...companyForm, companyNameEnglish: e.target.value })}
-                  $hasError={!!companyErrors.companyNameEnglish}
-                />
-                {companyErrors.companyNameEnglish && <ErrorText>{companyErrors.companyNameEnglish}</ErrorText>}
-              </FormField>
-            </FormRow>
+            <FieldRow>
+              <div>
+                <FieldLabel>{t.localCompanyName}</FieldLabel>
+                <FieldHint>{t.enterLocalCompanyName}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterLocalCompanyName}
+                    value={companyForm.companyNameLocal}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, companyNameLocal: e.target.value })}
+                    $hasError={!!companyErrors.companyNameLocal}
+                  />
+                  {companyErrors.companyNameLocal && <ErrorText>{companyErrors.companyNameLocal}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormField>
-              <RequiredLabel>Business Registration Number</RequiredLabel>
-              <InputWithError
-                placeholder="Enter your business registration number"
-                value={companyForm.businessRegistrationNumber}
-                onChange={(e) => setCompanyForm({ ...companyForm, businessRegistrationNumber: e.target.value })}
-                $hasError={!!companyErrors.businessRegistrationNumber}
-              />
-              {companyErrors.businessRegistrationNumber && <ErrorText>{companyErrors.businessRegistrationNumber}</ErrorText>}
-            </FormField>
+            {/* Business Registration - moved under company name */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.businessRegistrationNumber}</RequiredFieldLabel>
+                <FieldHint>{t.enterBusinessRegNumber}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterBusinessRegNumber}
+                    value={companyForm.businessRegistrationNumber}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, businessRegistrationNumber: e.target.value })}
+                    $hasError={!!companyErrors.businessRegistrationNumber}
+                  />
+                  {companyErrors.businessRegistrationNumber && <ErrorText>{companyErrors.businessRegistrationNumber}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormField>
-              <RequiredLabel>Company Address (Local Language)</RequiredLabel>
-              <InputWithError
-                placeholder="Enter full address in local language"
-                value={companyForm.addressLocal}
-                onChange={(e) => setCompanyForm({ ...companyForm, addressLocal: e.target.value })}
-                $hasError={!!companyErrors.addressLocal}
-              />
-              {companyErrors.addressLocal && <ErrorText>{companyErrors.addressLocal}</ErrorText>}
-            </FormField>
+            {/* Street Address 1 */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.streetAddress1}</RequiredFieldLabel>
+                <FieldHint>{t.enterStreetAddress1}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterStreetAddress1}
+                    value={companyForm.streetAddress1}
+                    onChange={(e) => handleStreetAddress1Change(e.target.value)}
+                    $hasError={!!companyErrors.streetAddress1}
+                  />
+                  {companyErrors.streetAddress1 && <ErrorText>{companyErrors.streetAddress1}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <FormField>
-              <RequiredLabel>Company Address (English)</RequiredLabel>
-              <InputWithError
-                placeholder="Enter full address in English"
-                value={companyForm.addressEnglish}
-                onChange={(e) => setCompanyForm({ ...companyForm, addressEnglish: e.target.value })}
-                $hasError={!!companyErrors.addressEnglish}
-              />
-              {companyErrors.addressEnglish && <ErrorText>{companyErrors.addressEnglish}</ErrorText>}
-            </FormField>
+            {/* Street Address 2 */}
+            <FieldRow>
+              <div>
+                <FieldLabel>{t.streetAddress2}</FieldLabel>
+                <FieldHint>{t.enterStreetAddress2}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterStreetAddress2}
+                    value={companyForm.streetAddress2}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, streetAddress2: e.target.value })}
+                  />
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
 
-            <HStack $gap={12} style={{ marginTop: '8px', justifyContent: 'flex-end' }}>
+            {/* City */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.city}</RequiredFieldLabel>
+                <FieldHint>{t.enterCity}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterCity}
+                    value={companyForm.city}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, city: e.target.value })}
+                    $hasError={!!companyErrors.city}
+                  />
+                  {companyErrors.city && <ErrorText>{companyErrors.city}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* State/Province and Postal Code in a row */}
+            <FieldRow>
+              <div>
+                <FieldLabel>{t.stateProvince}</FieldLabel>
+                <FieldHint>{t.enterStateProvince}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterStateProvince}
+                    value={companyForm.stateProvince}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, stateProvince: e.target.value })}
+                  />
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Postal Code */}
+            <FieldRow>
+              <div>
+                <FieldLabel>{t.postalCode}</FieldLabel>
+                <FieldHint>{t.enterPostalCode}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <InputWithError
+                    placeholder={t.enterPostalCode}
+                    value={companyForm.postalCode}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, postalCode: e.target.value })}
+                  />
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Country */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.countryRegion}</RequiredFieldLabel>
+                <FieldHint>{t.selectCountry}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <SelectWithError
+                    value={companyForm.country}
+                    onChange={(e) => handleCountryChange(e.target.value)}
+                    $hasError={!!companyErrors.country}
+                  >
+                    <option value="">{t.selectCountry}</option>
+                    {countries.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </SelectWithError>
+                  {companyErrors.country && <ErrorText>{companyErrors.country}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Default Language - moved above phone */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.defaultLanguage}</RequiredFieldLabel>
+                <FieldHint>{t.basedOnAddress}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <SelectWithError
+                    value={companyForm.defaultLanguage}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, defaultLanguage: e.target.value })}
+                    $hasError={!!companyErrors.defaultLanguage}
+                  >
+                    <option value="">{t.selectCountry}</option>
+                    {languages.map(lang => (
+                      <option key={lang.value} value={lang.value}>{lang.label}</option>
+                    ))}
+                  </SelectWithError>
+                  {companyErrors.defaultLanguage && <ErrorText>{companyErrors.defaultLanguage}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Default Timezone - moved above phone */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.defaultTimezone}</RequiredFieldLabel>
+                <FieldHint>{t.selectTimezone}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <SelectWithError
+                    value={companyForm.defaultTimezone}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, defaultTimezone: e.target.value })}
+                    $hasError={!!companyErrors.defaultTimezone}
+                  >
+                    <option value="">{t.selectTimezone}</option>
+                    {timezones.map(tz => (
+                      <option key={tz.value} value={tz.value}>{tz.label}</option>
+                    ))}
+                  </SelectWithError>
+                  {companyErrors.defaultTimezone && <ErrorText>{companyErrors.defaultTimezone}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Phone with country code selector */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.phoneNumber}</RequiredFieldLabel>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <PhoneInputGroup>
+                    <CountryCodeSelect
+                      value={companyForm.companyPhoneCountryCode}
+                      onChange={(e) => handleCompanyFormChange({ ...companyForm, companyPhoneCountryCode: e.target.value })}
+                      $hasError={!!companyErrors.companyPhone}
+                    >
+                      <option value="">--</option>
+                      {countryCodes.map(code => (
+                        <option key={code.value} value={code.value}>{code.label}</option>
+                      ))}
+                    </CountryCodeSelect>
+                    <PhoneInput
+                      type="tel"
+                      placeholder="123 4567 8900"
+                      value={companyForm.companyPhone}
+                      onChange={(e) => handleCompanyFormChange({ ...companyForm, companyPhone: e.target.value })}
+                      $hasError={!!companyErrors.companyPhone}
+                    />
+                  </PhoneInputGroup>
+                  {companyErrors.companyPhone && <ErrorText>{companyErrors.companyPhone}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+            <Divider />
+
+            {/* Relationship */}
+            <FieldRow>
+              <div>
+                <RequiredFieldLabel>{t.relationshipWith} {inviteData.clientCompanyName}</RequiredFieldLabel>
+                <FieldHint>{t.relationshipDescription} {inviteData.clientCompanyName}</FieldHint>
+              </div>
+              <FieldControl>
+                <VStack $gap={4} style={{ width: '100%' }}>
+                  <SelectWithError
+                    value={companyForm.relationshipType}
+                    onChange={(e) => handleCompanyFormChange({ ...companyForm, relationshipType: e.target.value })}
+                    $hasError={!!companyErrors.relationshipType}
+                  >
+                    <option value="">{t.selectCountry}</option>
+                    {relationshipTypes.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </SelectWithError>
+                  {companyErrors.relationshipType && <ErrorText>{companyErrors.relationshipType}</ErrorText>}
+                </VStack>
+              </FieldControl>
+            </FieldRow>
+
+            <FormActions>
               <Button $variant="secondary" onClick={handleBackFromCompany}>
-                Back
+                {t.back}
               </Button>
               <Button $variant="primary" onClick={handleCompanyNext}>
-                Complete Setup
+                {t.completeSetup}
               </Button>
-            </HStack>
+            </FormActions>
           </FormSection>
-        </CardBody>
+        </FormCardBody>
       </Card>
-      {prototypeFooter}
       </>
     );
   }
@@ -711,35 +1024,33 @@ export function SupplierAccountCreation({
       <Card>
         <CardBody>
           <DuplicateAlert>
-            <DuplicateTitle>Account Already Exists</DuplicateTitle>
+            <DuplicateTitle>{t.accountExists}</DuplicateTitle>
             <DuplicateText>
-              An account with this email address already exists. Log in to automatically connect with {inviteData.clientCompanyName}.
+              {t.accountExistsDescription} {inviteData.clientCompanyName}.
             </DuplicateText>
             <VStack $gap={12}>
               <Button $variant="primary" onClick={handleLogin} style={{ width: '100%' }}>
-                Log In & Connect
+                {t.loginAndConnect}
               </Button>
               <Button $variant="secondary" onClick={handleBackFromDuplicate} style={{ width: '100%' }}>
-                Use Different Email
+                {t.useDifferentEmail}
               </Button>
             </VStack>
           </DuplicateAlert>
         </CardBody>
       </Card>
-      {prototypeFooter}
       </>
     );
   }
 
   // Success State
   return (
-    <>
     <SuccessCard>
       <CardBody>
-        <SuccessIcon>✓</SuccessIcon>
-        <SuccessTitle>Welcome to Flexport!</SuccessTitle>
+        <SuccessIcon>🎉</SuccessIcon>
+        <SuccessTitle>{t.allSet}</SuccessTitle>
         <SuccessText>
-          Your account has been created and you're now connected with {inviteData.clientCompanyName}.
+          {t.congratulations} {inviteData.clientCompanyName}.
         </SuccessText>
 
         <ConnectionCard>
@@ -749,23 +1060,16 @@ export function SupplierAccountCreation({
             </ConnectionAvatar>
             <div>
               <ConnectionName>{inviteData.clientCompanyName}</ConnectionName>
-              <ConnectionRole>Client / Consignee</ConnectionRole>
+              <ConnectionRole>{t.clientConsignee}</ConnectionRole>
             </div>
           </ConnectionInfo>
-          <Tag tone="success">Connected</Tag>
+          <Tag tone="success">{t.connected}</Tag>
         </ConnectionCard>
 
-        <VStack $gap={12}>
-          <Button $variant="primary" as={Link} to="/settings/network/organizations" style={{ width: '100%', textDecoration: 'none', textAlign: 'center' }}>
-            View Network Connections
-          </Button>
-          <Button $variant="secondary" as={Link} to="/" style={{ width: '100%', textDecoration: 'none', textAlign: 'center' }}>
-            Go to Dashboard
-          </Button>
-        </VStack>
+        <RedirectNotice>
+          {t.redirectNotice}
+        </RedirectNotice>
       </CardBody>
     </SuccessCard>
-    {prototypeFooter}
-    </>
   );
 }

@@ -17,21 +17,31 @@ export interface InviteData {
 }
 
 export interface CompanyFormData {
-  country: string;
-  companyNameLocal: string;
   companyNameEnglish: string;
+  companyNameLocal: string;
   businessRegistrationNumber: string;
-  addressLocal: string;
-  addressEnglish: string;
-  entityRole: string;
+  streetAddress1: string;
+  streetAddress2: string;
+  city: string;
+  stateProvince: string;
+  postalCode: string;
+  country: string;
+  defaultLanguage: string;
+  defaultTimezone: string;
+  companyPhoneCountryCode: string;
+  companyPhone: string;
+  primaryContactEmail: string;
+  relationshipType: string;
 }
 
 export interface AccountFormData {
   firstName: string;
   lastName: string;
   email: string;
+  phoneCountryCode: string;
   phone: string;
   preferredLanguage: string;
+  jobTitle: string;
   password: string;
   confirmPassword: string;
 }
@@ -57,6 +67,36 @@ export const countries = [
   { value: 'jp', label: 'Japan' },
 ];
 
+export const countryCodes = [
+  { value: '+86', label: '+86', country: 'cn' },
+  { value: '+84', label: '+84', country: 'vn' },
+  { value: '+1', label: '+1', country: 'us' },
+  { value: '+52', label: '+52', country: 'mx' },
+  { value: '+49', label: '+49', country: 'de' },
+  { value: '+91', label: '+91', country: 'in' },
+  { value: '+66', label: '+66', country: 'th' },
+  { value: '+886', label: '+886', country: 'tw' },
+  { value: '+82', label: '+82', country: 'kr' },
+  { value: '+81', label: '+81', country: 'jp' },
+];
+
+// Helper to get default country code based on country
+export function getDefaultCountryCode(countryCode: string): string {
+  const countryToCode: Record<string, string> = {
+    cn: '+86',
+    vn: '+84',
+    us: '+1',
+    mx: '+52',
+    de: '+49',
+    in: '+91',
+    th: '+66',
+    tw: '+886',
+    kr: '+82',
+    jp: '+81',
+  };
+  return countryToCode[countryCode] || '+1';
+}
+
 export const languages = [
   { value: 'en', label: 'English' },
   { value: 'zh', label: '中文 (Chinese)' },
@@ -75,6 +115,63 @@ export const entityRoles = [
   { value: 'trading_company', label: 'Trading Company' },
   { value: 'freight_forwarder', label: 'Freight Forwarder' },
 ];
+
+export const relationshipTypes = [
+  { value: 'supplier', label: 'Supplier' },
+  { value: 'customer', label: 'Customer' },
+  { value: 'partner', label: 'Partner' },
+  { value: 'agent', label: 'Agent' },
+  { value: 'carrier', label: 'Carrier' },
+  { value: 'other', label: 'Other' },
+];
+
+export const timezones = [
+  { value: 'Asia/Shanghai', label: '(UTC+8) China Standard Time' },
+  { value: 'Asia/Ho_Chi_Minh', label: '(UTC+7) Vietnam Time' },
+  { value: 'America/New_York', label: '(UTC-5) Eastern Time' },
+  { value: 'America/Los_Angeles', label: '(UTC-8) Pacific Time' },
+  { value: 'America/Mexico_City', label: '(UTC-6) Central Time (Mexico)' },
+  { value: 'Europe/Berlin', label: '(UTC+1) Central European Time' },
+  { value: 'Asia/Kolkata', label: '(UTC+5:30) India Standard Time' },
+  { value: 'Asia/Bangkok', label: '(UTC+7) Thailand Time' },
+  { value: 'Asia/Taipei', label: '(UTC+8) Taiwan Time' },
+  { value: 'Asia/Seoul', label: '(UTC+9) Korea Standard Time' },
+  { value: 'Asia/Tokyo', label: '(UTC+9) Japan Standard Time' },
+];
+
+// Helper to get default timezone based on country
+export function getDefaultTimezone(countryCode: string): string {
+  const countryTimezones: Record<string, string> = {
+    cn: 'Asia/Shanghai',
+    vn: 'Asia/Ho_Chi_Minh',
+    us: 'America/New_York',
+    mx: 'America/Mexico_City',
+    de: 'Europe/Berlin',
+    in: 'Asia/Kolkata',
+    th: 'Asia/Bangkok',
+    tw: 'Asia/Taipei',
+    kr: 'Asia/Seoul',
+    jp: 'Asia/Tokyo',
+  };
+  return countryTimezones[countryCode] || 'America/New_York';
+}
+
+// Helper to get default language based on country
+export function getDefaultLanguage(countryCode: string): string {
+  const countryLanguages: Record<string, string> = {
+    cn: 'zh',
+    vn: 'vi',
+    us: 'en',
+    mx: 'es',
+    de: 'de',
+    in: 'en',
+    th: 'en',
+    tw: 'zh',
+    kr: 'ko',
+    jp: 'ja',
+  };
+  return countryLanguages[countryCode] || 'en';
+}
 
 // ============================================================================
 // Mock Invite Service
@@ -119,6 +216,111 @@ export function checkForDuplicate(email: string): { isDuplicate: boolean; type: 
     return { isDuplicate: true, type: 'email' };
   }
   return { isDuplicate: false, type: null };
+}
+
+// ============================================================================
+// Address Parsing Utility
+// ============================================================================
+
+export interface ParsedAddress {
+  streetAddress1: string;
+  streetAddress2: string;
+  city: string;
+  stateProvince: string;
+  postalCode: string;
+  country: string;
+}
+
+/**
+ * Attempts to parse a full address string into components.
+ * This is a simple heuristic parser - in production you'd use a geocoding API.
+ */
+export function parseAddress(fullAddress: string): Partial<ParsedAddress> {
+  const result: Partial<ParsedAddress> = {};
+  
+  if (!fullAddress.trim()) return result;
+  
+  // Split by commas
+  const parts = fullAddress.split(',').map(p => p.trim()).filter(Boolean);
+  
+  if (parts.length === 0) return result;
+  
+  // Try to identify country (last part often)
+  const countryMap: Record<string, string> = {
+    'china': 'cn',
+    'cn': 'cn',
+    'vietnam': 'vn',
+    'vn': 'vn',
+    'united states': 'us',
+    'usa': 'us',
+    'us': 'us',
+    'mexico': 'mx',
+    'mx': 'mx',
+    'germany': 'de',
+    'de': 'de',
+    'india': 'in',
+    'in': 'in',
+    'thailand': 'th',
+    'th': 'th',
+    'taiwan': 'tw',
+    'tw': 'tw',
+    'south korea': 'kr',
+    'korea': 'kr',
+    'kr': 'kr',
+    'japan': 'jp',
+    'jp': 'jp',
+  };
+  
+  // Check last part for country
+  if (parts.length > 0) {
+    const lastPart = parts[parts.length - 1].toLowerCase();
+    for (const [key, value] of Object.entries(countryMap)) {
+      if (lastPart.includes(key)) {
+        result.country = value;
+        parts.pop(); // Remove country from parts
+        break;
+      }
+    }
+  }
+  
+  // Try to extract postal code (numbers at end of a part)
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const postalMatch = parts[i].match(/\b(\d{5,6})\b/);
+    if (postalMatch) {
+      result.postalCode = postalMatch[1];
+      parts[i] = parts[i].replace(postalMatch[0], '').trim();
+      if (!parts[i]) parts.splice(i, 1);
+      break;
+    }
+  }
+  
+  // Assign remaining parts
+  if (parts.length >= 1) {
+    result.streetAddress1 = parts[0];
+  }
+  if (parts.length >= 2) {
+    // Check if second part looks like a district/area (common in Asian addresses)
+    const secondPart = parts[1];
+    if (secondPart.toLowerCase().includes('district') || 
+        secondPart.toLowerCase().includes('area') ||
+        secondPart.toLowerCase().includes('road') ||
+        secondPart.toLowerCase().includes('street')) {
+      result.streetAddress2 = secondPart;
+      if (parts.length >= 3) {
+        result.city = parts[2];
+      }
+      if (parts.length >= 4) {
+        result.stateProvince = parts[3];
+      }
+    } else {
+      result.city = parts[1];
+      if (parts.length >= 3) {
+        result.stateProvince = parts[2];
+      }
+    }
+  }
+  
+  return result;
 }
 
 // ============================================================================

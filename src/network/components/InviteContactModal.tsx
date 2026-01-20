@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import styled from 'styled-components';
 import { Button, Modal, VStack, Tag } from '@/ui/primitives';
 import { invitationService } from '../services/invitationService';
-import { personService } from '../services/entityService';
-import { organizationService } from '../services/entityService';
+import { personService, organizationService } from '../services/entityService';
 import type { Person, Organization } from '../types';
 
 interface InviteContactModalProps {
@@ -255,11 +254,33 @@ export function InviteContactModal({
     try {
       // Send invitations for each valid email
       for (const pill of validPills) {
-        const placeholderPersonId = `person_pending_${Date.now()}_${Math.random()}`;
+        // Parse name if available (format: "First Last")
+        let firstName = '';
+        let lastName = '';
+        if (pill.name) {
+          const nameParts = pill.name.trim().split(' ');
+          firstName = nameParts[0] || '';
+          lastName = nameParts.slice(1).join(' ') || '';
+        } else {
+          // Use email prefix as placeholder name
+          const emailPrefix = pill.email.split('@')[0];
+          firstName = emailPrefix;
+        }
+
+        // Create a new contact with invite sent flag
+        const newPerson = await personService.create({
+          firstName,
+          lastName,
+          email: pill.email,
+          organizationId: defaultOrganizationId || undefined,
+          matchStatus: 'unlinked',
+          verificationStatus: 'unverified',
+          inviteSentAt: new Date().toISOString(),
+        });
         
         await invitationService.create({
           entityType: 'person',
-          entityId: placeholderPersonId,
+          entityId: newPerson.id,
           invitationType: 'join',
           invitedEmail: pill.email,
           status: 'pending',

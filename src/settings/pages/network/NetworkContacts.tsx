@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams, useLocation, Outlet, Navigate } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/SettingsPageLayout';
-import { Button, Card, CardHeader, CardTitle, Checkbox, Input, Select, VStack } from '@/ui/primitives';
+import { Button, Card, CardHeader, CardTitle, Checkbox, Input, Select, Tag, VStack } from '@/ui/primitives';
 import { InviteContactModal } from '@/network/components/InviteContactModal';
 import { BulkActionBar } from '@/network/components/BulkActionBar';
 import { EmptyState } from '@/network/components/EmptyState';
@@ -95,7 +95,7 @@ function ContactsList() {
   };
 
   const filteredContacts = useMemo(() => {
-    return contacts.filter((contact) => {
+    const filtered = contacts.filter((contact) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -118,6 +118,22 @@ function ContactsList() {
       if (filterVerificationStatus !== 'all' && contact.verificationStatus !== filterVerificationStatus) return false;
 
       return true;
+    });
+
+    // Sort: contacts with pending invites (inviteSentAt set) go to the top, sorted by most recent first
+    return filtered.sort((a, b) => {
+      const aHasInvite = !!a.inviteSentAt;
+      const bHasInvite = !!b.inviteSentAt;
+      
+      // If both have invites, sort by most recent
+      if (aHasInvite && bHasInvite) {
+        return new Date(b.inviteSentAt!).getTime() - new Date(a.inviteSentAt!).getTime();
+      }
+      // If only one has invite, put it first
+      if (aHasInvite && !bHasInvite) return -1;
+      if (!aHasInvite && bHasInvite) return 1;
+      // Otherwise, maintain original order
+      return 0;
     });
   }, [contacts, organizations, searchQuery, filterOrganization, filterMatchStatus, filterVerificationStatus]);
 
@@ -249,6 +265,7 @@ function ContactsList() {
                     <Th>Email</Th>
                     <Th>Phone</Th>
                     <Th>Organization</Th>
+                    <Th>Invite</Th>
                     <Th>Match</Th>
                     <Th>Verification</Th>
                   </tr>
@@ -279,6 +296,13 @@ function ContactsList() {
                       <Td>{contact.email || '—'}</Td>
                       <Td>{contact.phone || '—'}</Td>
                       <Td>{getOrganizationName(contact.organizationId)}</Td>
+                      <Td>
+                        {contact.inviteSentAt ? (
+                          <Tag tone="warning">Invite Sent</Tag>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)' }}>—</span>
+                        )}
+                      </Td>
                       <Td>
                         <StatusBadge type="match" status={contact.matchStatus} />
                       </Td>

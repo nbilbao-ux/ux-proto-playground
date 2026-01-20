@@ -74,6 +74,9 @@ export interface Person {
   matchStatus: MatchStatus;
   verificationStatus: VerificationStatus;
   
+  // Invite tracking
+  inviteSentAt?: string;
+  
   // Global Network reference
   matchedGlobalEntityId?: string;
   

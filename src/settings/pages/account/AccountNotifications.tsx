@@ -1012,6 +1012,7 @@ export function AccountNotifications() {
                   </CheckboxGroup>
                 </FieldControl>
               </FieldRow>
+              <Divider />
 
               {/* Statement of Account */}
               <FieldRow>
